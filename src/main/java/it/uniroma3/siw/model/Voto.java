@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 
 @Entity
-public class Commento {
+public class Voto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,7 +20,7 @@ public class Commento {
     @Column(length = 1000)
     private String testo;
     
-    public Commento() {
+    public Voto() {
     }
     
     public String getImmagineBase64() {
