@@ -24,5 +24,5 @@ public class VideogiocoController {
     public String showVideogioco(@PathVariable Long id, Model model) {
         model.addAttribute("videogioco", videogiocoService.findById(id).orElse(null));
         return "videogioco"; // Rimanda a videogioco.html
-    }
+    } 
 }

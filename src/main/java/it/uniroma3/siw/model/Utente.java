@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import it.uniroma3.siw.model.*;
+
 @Entity
 public class Utente {
 
@@ -22,8 +24,11 @@ public class Utente {
 
     private LocalDate dataRegistrazione;
 
+    @Column(nullable = false)
+    private String ruolo;
+
     @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL)
-    private List<Recensione> recensioni;
+    private List<VideogiocoLibreria> videogiocoLibreria;
 
     public Utente() {
     }
@@ -68,11 +73,20 @@ public class Utente {
         this.dataRegistrazione = dataRegistrazione;
     }
 
-    public List<Recensione> getRecensioni() {
-        return recensioni;
+    public List<VideogiocoLibreria> getRecensioni() {
+        return videogiocoLibreria;
     }
 
-    public void setRecensioni(List<Recensione> recensioni) {
-        this.recensioni = recensioni;
+    public void setRecensioni(List<VideogiocoLibreria> videogiocoLibreria) {
+        this.videogiocoLibreria = videogiocoLibreria;
     }
+
+    public String getRuolo() {
+        return ruolo;
+    }
+
+    public void setRuolo(String ruolo) {
+        this.ruolo = ruolo;
+    }
+
 }
