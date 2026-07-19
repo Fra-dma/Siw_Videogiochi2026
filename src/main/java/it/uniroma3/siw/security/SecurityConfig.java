@@ -16,23 +16,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize              
-                // Permettiamo l'accesso a tutti (loggati e non) alla home, alla lista e al singolo gioco
+                // Accesso libero a tutti (non loggati) per home, lista giochi, e file statici
                 .requestMatchers("/", "/videogiochi", "/videogioco/**", "/css/**", "/images/**", "/js/**", "/api/**").permitAll()
                 
-                // Rotte protette per l'inserimento/modifica dei giochi (solo per ADMIN)
-                .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                
-                // Qualsiasi altra richiesta richiede di aver fatto il login (es. aggiungere alla libreria)
+                // Qualsiasi altra azione (es. aggiungere alla libreria) richiede SOLO di essere loggati
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login") 
-                .defaultSuccessUrl("/") // Dopo il login ti rimanda alla home page
+                .defaultSuccessUrl("/") 
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout") 
-                .logoutSuccessUrl("/") // Dopo il logout ti rimanda alla home page
+                .logoutSuccessUrl("/") 
                 .permitAll()
             );
 

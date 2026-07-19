@@ -20,24 +20,15 @@ public class InitData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         
-        // Creazione utente standard
-        if (utenteRepository.findByUsername("mario") == null) {
+        // Creazione di un singolo utente di test, se non esiste già
+        if (utenteRepository.findByUsername("mario").isEmpty()) {
             Utente u = new Utente();
             u.setUsername("mario");
             u.setPassword(passwordEncoder.encode("password123"));
-            u.setRuolo("USER"); // L'utente normale ha ruolo USER
+            u.setEmail("mario@example.com"); // Obbligatorio perché nel model hai nullable=false
+            u.setRuolo("USER"); // Requisito standard di Spring Security
             
             utenteRepository.save(u);
-        }
-
-        // Creazione utente amministratore
-        if (utenteRepository.findByUsername("admin") == null) {
-            Utente admin = new Utente();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRuolo("ADMIN"); // L'admin ha ruolo ADMIN
-            
-            utenteRepository.save(admin);
         }
     }
 }
