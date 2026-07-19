@@ -32,6 +32,16 @@ public class VideogiocoLibreriaService {
     @Autowired
     private RepositoryUtente utenteRepository;
     
+    public boolean esisteGiocoDaRawgInLibreria(Long idUtente, Long rawgId) {
+        Utente utente = utenteRepository.findById(idUtente).orElse(null);
+        Videogioco videogioco = videogiocoRepository.findByRawgId(rawgId).orElse(null);
+        
+        if (utente != null && videogioco != null) {
+            return videogiocoLibreriaRepository.existsByUtenteAndVideogioco(utente, videogioco);
+        }
+        return false; // Se non c'è l'utente o il gioco non è mai stato salvato, restituisce falso
+    }
+    
     @Transactional
     public List<Videogioco> ottieniVideogiochiLibreriaUtente(Long idUtente) {
         
@@ -46,18 +56,21 @@ public class VideogiocoLibreriaService {
 
     @Transactional
     public void aggiungiDaRawgALibreria(Long utenteId, Long rawgId) {
+        
         Utente utente = utenteRepository.findById(utenteId).orElse(null);
         
-        // Se l'utente non esiste, fermiamo tutto
-        if (utente == null) return; 
+        // Se l'utente non c'è, interrompiamo l'operazione
+        if (utente == null) {
+            return; 
+        }
 
-        // 1. Cerchiamo se il gioco esiste già nel NOSTRO database
         Videogioco videogioco = videogiocoRepository.findByRawgId(rawgId).orElse(null);
 
-        // 2. Se non esiste, lo "importiamo" da RAWG
+        // Se il gioco non esiste nel database locale, lo scarichiamo da RAWG
         if (videogioco == null) {
-            // Sostituisci "getGameById" con il nome esatto del metodo nel tuo RawgApiService
-            RawgGameDTO dto = rawgApiService.getGameById(rawgId); 
+            
+            // NOTA: Assicurati che "getGameDetails" sia il nome corretto del metodo nel tuo RawgApiService
+            RawgGameDTO dto = rawgApiService.getGameDetails(rawgId); 
             
             if (dto != null) {
                 videogioco = new Videogioco();
@@ -65,19 +78,20 @@ public class VideogiocoLibreriaService {
                 videogioco.setTitolo(dto.getName());
                 videogioco.setUrlCopertina(dto.getBackground_image());
                 
-                // Convertiamo la data "YYYY-MM-DD" per prendere solo l'anno (es. "2015")
+                // Estraiamo solo l'anno dalla data di rilascio
                 if (dto.getReleased() != null && dto.getReleased().length() >= 4) {
                     videogioco.setAnnoUscita(Integer.parseInt(dto.getReleased().substring(0, 4)));
                 }
                 
-                // Salviamo il nuovo gioco nel nostro database!
+                // Salviamo il nuovo gioco nel database locale
                 videogioco = videogiocoRepository.save(videogioco); 
             } else {
-                return; // Se l'API fallisce, ci fermiamo
+                // Se l'API non restituisce dati validi, interrompiamo l'operazione
+                return;
             }
         }
 
-        // 3. Ora che il gioco esiste localmente, lo aggiungiamo alla libreria (evitando doppioni)
+        // Se il gioco non è già presente nella libreria dell'utente, lo aggiungiamo
         if (!videogiocoLibreriaRepository.existsByUtenteAndVideogioco(utente, videogioco)) {
             VideogiocoLibreria nuovaAggiunta = new VideogiocoLibreria();
             nuovaAggiunta.setUtente(utente);

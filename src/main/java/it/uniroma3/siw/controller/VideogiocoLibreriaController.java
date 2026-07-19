@@ -31,12 +31,9 @@ public class VideogiocoLibreriaController {
     // Questa rotta gestisce l'aggiunta di un gioco proveniente dalle API di RAWG
     @PostMapping("/libreria/aggiungiDaRawg")
     public String aggiungiGiocoDaRawg(@RequestParam("rawgId") Long rawgId, @RequestParam("idUtente") Long idUtente) {
-        
-        // Richiamiamo la nostra nuova magia nel Service
+        // Salviamo il gioco
         videogiocoLibreriaService.aggiungiDaRawgALibreria(idUtente, rawgId);
-        
-        // Reindirizziamo l'utente alla sua libreria personale per fargli vedere il risultato
-        return "redirect:/libreria"; 
+        return "redirect:/rawg/gioco/" + rawgId; 
     }
     
     // Questa rotta mostra la pagina della libreria personale (Il tuo nuovo HTML)
