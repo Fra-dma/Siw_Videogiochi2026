@@ -23,6 +23,26 @@ public class RawgApiService {
 
     @Autowired
     private RestTemplate restTemplate;
+    
+public RawgGameDTO getGameById(Long rawgId) {
+        
+        // Creiamo lo strumento di Spring Boot per fare richieste su Internet
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Costruiamo l'indirizzo finale da chiamare
+        String url = baseUrl + rawgId + "?key=" + apiKey;
+
+        try {
+            // Facciamo la richiesta HTTP GET. 
+            RawgGameDTO giocoTrovato = restTemplate.getForObject(url, RawgGameDTO.class);
+            return giocoTrovato;
+            
+        } catch (Exception e) {
+            // Se RAWG ci dà un errore (es. gioco non trovato o chiave API errata), lo catturiamo qui
+            System.out.println("Attenzione! Errore durante il recupero del gioco da RAWG: " + e.getMessage());
+            return null;
+        }
+    }
 
     /**
      * Recupera una lista dei giochi più popolari (o aggiunti di recente).
