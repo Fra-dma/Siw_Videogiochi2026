@@ -28,13 +28,27 @@ public class RawgApiService {
      * Recupera una lista dei giochi più popolari (o aggiunti di recente).
      */
     public List<RawgGameDTO> getPopularGames() {
-        String url = UriComponentsBuilder.fromUriString(baseUrl)
+        return fetchGamesList(UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
                 .queryParam("key", apiKey)
-                .queryParam("ordering", "-added") // Ordina per numero di persone che lo hanno aggiunto
-                .queryParam("page_size", 20)      // Numero di risultati per pagina
-                .toUriString();
+                .queryParam("ordering", "-added")
+                .queryParam("page_size", 20)
+                .toUriString());
+    }
 
+    /**
+     * Cerca giochi tramite query testuale.
+     */
+    public List<RawgGameDTO> searchGames(String query) {
+        return fetchGamesList(UriComponentsBuilder.fromUriString(baseUrl)
+                .path("/games")
+                .queryParam("key", apiKey)
+                .queryParam("search", query)
+                .queryParam("page_size", 20)
+                .toUriString());
+    }
+
+    private List<RawgGameDTO> fetchGamesList(String url) {
         try {
             RawgResponseDTO response = restTemplate.getForObject(url, RawgResponseDTO.class);
             if (response != null && response.getResults() != null) {

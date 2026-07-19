@@ -1,0 +1,33 @@
+package it.uniroma3.siw.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import it.uniroma3.siw.model.dto.RawgGameDTO;
+import it.uniroma3.siw.service.RawgApiService;
+
+@RestController
+@RequestMapping("/api/rawg")
+public class RawgRestController {
+
+    @Autowired
+    private RawgApiService rawgApiService;
+
+    @GetMapping("/popolari")
+    public List<RawgGameDTO> getPopularGames() {
+        return rawgApiService.getPopularGames();
+    }
+
+    @GetMapping("/ricerca")
+    public List<RawgGameDTO> searchGames(@RequestParam("query") String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return rawgApiService.getPopularGames();
+        }
+        return rawgApiService.searchGames(query);
+    }
+}

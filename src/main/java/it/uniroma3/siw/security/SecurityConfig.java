@@ -17,7 +17,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize              
                 // Accesso libero a tutti (non loggati) per home, lista giochi, e file statici
-                .requestMatchers("/", "/videogiochi", "/videogioco/**", "/css/**", "/images/**", "/js/**", "/api/**").permitAll()
+                .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/api/**", "/rawg/**").permitAll()
                 
                 // Qualsiasi altra azione (es. aggiungere alla libreria) richiede SOLO di essere loggati
                 .anyRequest().authenticated()

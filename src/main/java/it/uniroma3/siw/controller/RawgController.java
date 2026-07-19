@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.service.RawgApiService;
 
@@ -14,10 +15,9 @@ public class RawgController {
     @Autowired
     private RawgApiService rawgApiService;
 
-    // Questa rotta mostra la lista dei giochi popolari presi da RAWG
+    // Questa rotta restituisce la vista in cui React farà la ricerca dei giochi
     @GetMapping("/rawg/popolari")
-    public String showPopularGames(Model model) {
-        model.addAttribute("giochi", rawgApiService.getPopularGames());
+    public String showPopularGames() {
         return "rawg_popolari"; // Restituisce la vista rawg_popolari.html
     }
 

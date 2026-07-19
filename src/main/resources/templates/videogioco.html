@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${videogioco != null ? videogioco.titolo + ' - Siw Videogiochi' : 'Dettaglio Gioco'}">Dettaglio Gioco</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">🎮 SiwVideogiochi</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/rawg/popolari">Giochi Popolari (RAWG)</a>
+            <a href="/videogiochi" style="color: var(--primary);">Libreria Personale</a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1000px; padding: 2rem;">
+        
+        <div th:if="${videogioco == null}" style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
+            <h2>Gioco non trovato nella libreria.</h2>
+            <a href="/videogiochi" class="btn btn-primary" style="margin-top: 1rem;">Torna alla Libreria</a>
+        </div>
+
+        <div th:if="${videogioco != null}" class="game-details" style="display: grid; grid-template-columns: 1fr 2fr; gap: 3rem;">
+            
+            <!-- Colonna Sinistra: Immagine -->
+            <div class="game-details-img">
+                <img th:src="${videogioco.urlCopertina != null ? videogioco.urlCopertina : 'https://via.placeholder.com/600x400?text=Nessuna+Copertina'}" 
+                     alt="Cover" 
+                     style="width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            </div>
+
+            <!-- Colonna Destra: Dettagli -->
+            <div class="game-details-content">
+                <h1 th:text="${videogioco.titolo}" style="font-size: 3rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff, #a0a0a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Titolo Gioco</h1>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem; color: var(--text-muted); font-size: 1.1rem; align-items: center;">
+                    <span th:text="${videogioco.annoUscita != null ? videogioco.annoUscita : 'Anno sconosciuto'}">2023</span>
+                    <span>&bull;</span>
+                    <span th:if="${videogioco.sviluppatore != null}" th:text="${videogioco.sviluppatore.nome}">Sviluppatore</span>
+                    <span th:if="${videogioco.sviluppatore == null}">Sviluppatore sconosciuto</span>
+                </div>
+
+                <div class="tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <!-- Generi -->
+                    <span th:each="genere : ${videogioco.generi}" 
+                          class="tag" 
+                          style="background: rgba(142, 45, 226, 0.2); color: #c471ed; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem;"
+                          th:text="${genere.nome}">Genere</span>
+                </div>
+                
+                <div class="tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <!-- Piattaforme -->
+                    <span th:each="piattaforma : ${videogioco.piattaforme}" 
+                          class="tag" 
+                          style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2);"
+                          th:text="${piattaforma.nome}">Piattaforma</span>
+                </div>
+
+                <div style="margin-bottom: 2rem; line-height: 1.6; color: rgba(255,255,255,0.8);">
+                    <h3>Descrizione</h3>
+                    <p th:text="${videogioco.descrizione != null ? videogioco.descrizione : 'Nessuna descrizione disponibile.'}" style="margin-top: 0.5rem;">Descrizione del gioco...</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
