@@ -31,7 +31,7 @@
     </div>
 
     <!-- Componente React Integrato -->
-    <script type="text/babel">
+    <script type="text/babel" th:inline="none">
         const { useState, useEffect } = React;
 
         function SearchApp() {
@@ -115,7 +115,7 @@
                     ) : (
                         <div className="games-grid">
                             {games.map(gioco => (
-                                <a key={gioco.id} href={`/rawg/gioco/${gioco.id}`} className="game-card">
+                                <a key={gioco.id} href={"/rawg/gioco/" + gioco.id} className="game-card">
                                     <div className="card-img-container">
                                         <img 
                                             src={gioco.background_image || 'https://via.placeholder.com/600x400?text=No+Image'} 
