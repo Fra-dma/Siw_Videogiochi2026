@@ -24,7 +24,7 @@ public class Videogioco {
     private Sviluppatore sviluppatore;
 
     @OneToMany(mappedBy = "videogioco", cascade = CascadeType.ALL)
-    private List<Recensione> recensioni;
+    private List<VideogiocoLibreria> videogiocoLibreria;
 
     @ManyToMany
     private List<Genere> generi;
@@ -83,12 +83,12 @@ public class Videogioco {
 		this.sviluppatore = sviluppatore;
 	}
 
-	public List<Recensione> getRecensioni() {
-		return recensioni;
+	public List<VideogiocoLibreria> getRecensioni() {
+		return videogiocoLibreria;
 	}
 
-	public void setRecensioni(List<Recensione> recensioni) {
-		this.recensioni = recensioni;
+	public void setRecensioni(List<VideogiocoLibreria> videogiocoLibreria) {
+		this.videogiocoLibreria = videogiocoLibreria;
 	}
 
 	public List<Genere> getGeneri() {
