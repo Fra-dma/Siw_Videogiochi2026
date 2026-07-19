@@ -28,10 +28,19 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/logout") 
-                .logoutSuccessUrl("/") 
-                .permitAll()
-            );
+                    .logoutUrl("/logout")
+                    // Sostituiamo logoutSuccessUrl con un handler dinamico
+                    .logoutSuccessHandler((request, response, authentication) -> {
+                        String refererUrl = request.getHeader("Referer");
+                        // Se c'è una pagina di provenienza torna lì, altrimenti vai alla home
+                        if (refererUrl != null) {
+                            response.sendRedirect(refererUrl);
+                        } else {
+                            response.sendRedirect("/");
+                        }
+                    })
+                    .permitAll()
+                );
 
         return http.build();
     }

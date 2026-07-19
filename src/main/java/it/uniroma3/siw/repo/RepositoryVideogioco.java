@@ -8,11 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import it.uniroma3.siw.model.Videogioco;
 
-public interface RepositoryVideogioco extends CrudRepository<Videogioco, Long>{
-	
-	@Query("SELECT v FROM Videogioco v LEFT JOIN FETCH v.videogiocoLibreria WHERE v.id = :id")
-    Optional<Videogioco> findByIdWithRecensioni(@Param("id") Long id);
+public interface RepositoryVideogioco extends CrudRepository<Videogioco, Long> {
+
+    @Query("SELECT v FROM Videogioco v LEFT JOIN FETCH v.videogiocoLibreria WHERE v.id = :id")
+    public Optional<Videogioco> findByIdWithVideogiocoLibreria(@Param("id") Long id);
 
     Optional<Videogioco> findByRawgId(Long rawgId);
-	
+
 }
