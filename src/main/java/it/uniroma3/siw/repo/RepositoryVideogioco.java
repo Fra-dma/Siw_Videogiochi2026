@@ -12,5 +12,7 @@ public interface RepositoryVideogioco extends CrudRepository<Videogioco, Long>{
 	
 	@Query("SELECT v FROM Videogioco v LEFT JOIN FETCH v.recensioni WHERE v.id = :id")
     Optional<Videogioco> findByIdWithRecensioni(@Param("id") Long id);
+
+    Optional<Videogioco> findByRawgId(Long rawgId);
 	
 }

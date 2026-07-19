@@ -10,6 +10,9 @@ public class Videogioco {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
+    private Long rawgId;
+
     @Column(nullable = false)
     private String titolo;
 
@@ -41,6 +44,14 @@ public class Videogioco {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getRawgId() {
+		return rawgId;
+	}
+
+	public void setRawgId(Long rawgId) {
+		this.rawgId = rawgId;
 	}
 
 	public String getTitolo() {
