@@ -12,14 +12,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
+	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize              
-                // Accesso libero a tutti (non loggati) per home, lista giochi, e file statici
-                .requestMatchers("/", "/videogiochi", "/videogioco/**", "/css/**", "/images/**", "/js/**", "/api/**").permitAll()
-                
-                // Qualsiasi altra azione (es. aggiungere alla libreria) richiede SOLO di essere loggati
+            		.requestMatchers("/", "/videogioco/**", "/css/**", "/images/**", "/js/**", "/api/**", "/error", "/rawg/popolari", "/rawg/gioco/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -27,20 +24,24 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/") 
                 .permitAll()
             )
+            // --- NUOVO BLOCCO OAUTH2 ---
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login") // Usa la stessa pagina del login normale
+                .defaultSuccessUrl("/") // Dove andare dopo il login con Google
+            )
+            // ---------------------------
             .logout(logout -> logout
-                    .logoutUrl("/logout")
-                    // Sostituiamo logoutSuccessUrl con un handler dinamico
-                    .logoutSuccessHandler((request, response, authentication) -> {
-                        String refererUrl = request.getHeader("Referer");
-                        // Se c'è una pagina di provenienza torna lì, altrimenti vai alla home
-                        if (refererUrl != null) {
-                            response.sendRedirect(refererUrl);
-                        } else {
-                            response.sendRedirect("/");
-                        }
-                    })
-                    .permitAll()
-                );
+                .logoutUrl("/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    String refererUrl = request.getHeader("Referer");
+                    if (refererUrl != null) {
+                        response.sendRedirect(refererUrl);
+                    } else {
+                        response.sendRedirect("/");
+                    }
+                })
+                .permitAll()
+            );
 
         return http.build();
     }
