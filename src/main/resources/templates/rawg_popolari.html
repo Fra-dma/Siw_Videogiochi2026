@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giochi Popolari - Siw Videogiochi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">🎮 SiwVideogiochi</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
+            <a href="/videogiochi">Libreria Personale</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">I Più Popolari del Momento</h1>
+            <p style="color: var(--text-muted);">Esplora i giochi di tendenza recuperati in tempo reale tramite le API di RAWG.</p>
+        </div>
+
+        <div class="games-grid">
+            <a th:each="gioco : ${giochi}" th:href="@{/rawg/gioco/{id}(id=${gioco.id})}" class="game-card">
+                <div class="card-img-container">
+                    <!-- Mostra immagine da RAWG se disponibile, altrimenti placeholder -->
+                    <img th:src="${gioco.background_image != null ? gioco.background_image : 'https://via.placeholder.com/600x400?text=No+Image'}" 
+                         alt="Cover del gioco" 
+                         class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title" th:text="${gioco.name}">Nome Gioco</h3>
+                    <div class="card-meta">
+                        <span th:text="${gioco.released != null ? gioco.released : 'Data sconosciuta'}">2023-01-01</span>
+                        <span class="rating-badge">
+                            ★ <span th:text="${gioco.rating != null ? gioco.rating : 'N/A'}">4.5</span>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div th:if="${giochi == null or giochi.empty}" style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
+            <h2>Nessun gioco trovato o errore API.</h2>
+        </div>
+    </div>
+
+</body>
+</html>

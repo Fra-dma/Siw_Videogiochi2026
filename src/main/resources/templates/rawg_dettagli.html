@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${gioco != null ? gioco.name : 'Dettagli Gioco'}">Dettagli Gioco</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">🎮 SiwVideogiochi</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
+            <a href="/videogiochi">Libreria Personale</a>
+        </div>
+    </nav>
+
+    <div class="container" th:if="${gioco != null}">
+        <div class="detail-hero">
+            <img th:src="${gioco.background_image != null ? gioco.background_image : 'https://via.placeholder.com/1200x600?text=No+Image'}" 
+                 alt="Background del gioco" 
+                 class="detail-bg">
+            <div class="detail-overlay">
+                <div class="detail-info">
+                    <h1 class="detail-title" th:text="${gioco.name}">Nome Gioco</h1>
+                    <div class="detail-meta">
+                        <div>
+                            <strong>Data Rilascio:</strong> <span th:text="${gioco.released != null ? gioco.released : 'Sconosciuta'}">N/A</span>
+                        </div>
+                        <div>
+                            <strong>Valutazione RAWG:</strong> 
+                            <span class="rating-badge" style="display:inline-flex; font-size:1rem;">
+                                ★ <span th:text="${gioco.rating != null ? gioco.rating : 'N/A'}">4.5</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                        <a href="/rawg/popolari" class="btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">Torna ai Popolari</a>
+                        <!-- Se vuoi, in futuro potrai aggiungere un bottone "Aggiungi alla Libreria" -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container" th:if="${gioco == null}">
+        <div class="page-header">
+            <h1 class="page-title">Gioco non trovato</h1>
+            <p style="color: var(--text-muted);">Impossibile recuperare i dettagli per questo gioco. L'API RAWG potrebbe non aver restituito risultati.</p>
+            <a href="/rawg/popolari" class="btn btn-primary" style="margin-top: 2rem;">Torna indietro</a>
+        </div>
+    </div>
+
+</body>
+</html>
