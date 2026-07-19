@@ -22,6 +22,10 @@ public class Utente {
 
     private LocalDate dataRegistrazione;
 
+    @Column(nullable = false)
+    private String ruolo;
+
+
     @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL)
     private List<Recensione> recensioni;
 
@@ -75,4 +79,15 @@ public class Utente {
     public void setRecensioni(List<Recensione> recensioni) {
         this.recensioni = recensioni;
     }
+
+    // --- GETTER E SETTER DEI NUOVI CAMPI ---
+
+    public String getRuolo() {
+        return ruolo;
+    }
+
+    public void setRuolo(String ruolo) {
+        this.ruolo = ruolo;
+    }
+
 }
