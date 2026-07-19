@@ -15,9 +15,10 @@ public class RawgController {
     @Autowired
     private RawgApiService rawgApiService;
 
-    // Questa rotta restituisce la vista in cui React farà la ricerca dei giochi
+    // Questa rotta restituisce la vista dei giochi popolari
     @GetMapping("/rawg/popolari")
-    public String showPopularGames() {
+    public String showPopularGames(Model model) {
+        model.addAttribute("giochi", rawgApiService.getPopularGames());
         return "rawg_popolari"; // Restituisce la vista rawg_popolari.html
     }
 
