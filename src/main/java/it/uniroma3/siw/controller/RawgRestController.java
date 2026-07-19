@@ -24,10 +24,10 @@ public class RawgRestController {
     }
 
     @GetMapping("/ricerca")
-    public List<RawgGameDTO> searchGames(@RequestParam("query") String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return rawgApiService.getPopularGames();
-        }
-        return rawgApiService.searchGames(query);
+    public List<RawgGameDTO> searchGames(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "excludeAdditions", required = false) Boolean excludeAdditions,
+            @RequestParam(value = "ordering", required = false) String ordering) {
+        return rawgApiService.getGamesWithFilters(query, excludeAdditions, ordering);
     }
 }

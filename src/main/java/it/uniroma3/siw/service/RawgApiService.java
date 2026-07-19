@@ -68,6 +68,33 @@ public RawgGameDTO getGameById(Long rawgId) {
                 .toUriString());
     }
 
+    /**
+     * Recupera i giochi con filtri avanzati.
+     */
+    public List<RawgGameDTO> getGamesWithFilters(String query, Boolean excludeAdditions, String ordering) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
+                .path("/games")
+                .queryParam("key", apiKey)
+                .queryParam("page_size", 20);
+
+        if (query != null && !query.trim().isEmpty()) {
+            builder.queryParam("search", query);
+        }
+        
+        if (excludeAdditions != null) {
+            builder.queryParam("exclude_additions", excludeAdditions);
+        }
+        
+        if (ordering != null && !ordering.trim().isEmpty()) {
+            builder.queryParam("ordering", ordering);
+        } else if (query == null || query.trim().isEmpty()) {
+            // Ordine predefinito per i popolari
+            builder.queryParam("ordering", "-added");
+        }
+
+        return fetchGamesList(builder.toUriString());
+    }
+
     private List<RawgGameDTO> fetchGamesList(String url) {
         try {
             RawgResponseDTO response = restTemplate.getForObject(url, RawgResponseDTO.class);
