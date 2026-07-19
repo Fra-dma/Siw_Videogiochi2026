@@ -35,6 +35,6 @@ public class VideogiocoService {
     }
 
     public Optional<Videogioco> findByIdConRecensioni(Long id) {
-        return videogiocoRepository.findByIdWithRecensioni(id); 
+        return videogiocoRepository.findByIdWithVideogiocoLibreria(id); 
     }
 }

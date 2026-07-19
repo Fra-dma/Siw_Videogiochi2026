@@ -22,8 +22,8 @@ INSERT INTO sviluppatore (id, nome) VALUES (nextval('sviluppatore_seq'), 'FromSo
 -- ==========================================
 -- 4. UTENTI
 -- ==========================================
-INSERT INTO utente (id, username, email, password, data_registrazione) VALUES (nextval('utente_seq'), 'mario_rossi', 'mario@email.com', 'password123', '2026-07-01');
-INSERT INTO utente (id, username, email, password, data_registrazione) VALUES (nextval('utente_seq'), 'luigi_verdi', 'luigi@email.com', 'qwerty', '2026-07-05');
+INSERT INTO utente (id, username, email, password, data_registrazione, ruolo) VALUES (nextval('utente_seq'), 'mario_rossi', 'mario@email.com', 'password123', '2026-07-01', 'USER');
+INSERT INTO utente (id, username, email, password, data_registrazione, ruolo) VALUES (nextval('utente_seq'), 'luigi_verdi', 'luigi@email.com', 'qwerty', '2026-07-05', 'USER');
 
 -- ==========================================
 -- 5. VIDEOGIOCHI
@@ -44,7 +44,8 @@ INSERT INTO videogioco_piattaforme (videogiochi_id, piattaforme_id) VALUES ((SEL
 INSERT INTO videogioco_piattaforme (videogiochi_id, piattaforme_id) VALUES ((SELECT id FROM videogioco WHERE titolo = 'The Witcher 3'), (SELECT id FROM piattaforma WHERE nome = 'PC'));
 
 -- ==========================================
--- 7. RECENSIONI
+-- 7. LIBRERIA UTENTI (ex RECENSIONI)
 -- ==========================================
-INSERT INTO recensione (id, commento, data_recensione, stato_giocata, voto, utente_id, videogioco_id) VALUES (nextval('recensione_seq'), 'Un capolavoro assoluto, storia bellissima.', '2026-07-10', 'COMPLETATO', 10, (SELECT id FROM utente WHERE username = 'mario_rossi'), (SELECT id FROM videogioco WHERE titolo = 'The Last of Us'));
-INSERT INTO recensione (id, commento, data_recensione, stato_giocata, voto, utente_id, videogioco_id) VALUES (nextval('recensione_seq'), 'Troppo difficile per me, ma bel gioco.', '2026-07-12', 'IN_CORSO', 7, (SELECT id FROM utente WHERE username = 'luigi_verdi'), (SELECT id FROM videogioco WHERE titolo = 'Elden Ring'));
+INSERT INTO videogioco_libreria (id, commento, data_aggiunta, voto, utente_id, videogioco_id) VALUES (nextval('videogioco_libreria_seq'), 'Un capolavoro assoluto, storia bellissima.', '2026-07-10', 10, (SELECT id FROM utente WHERE username = 'mario_rossi'), (SELECT id FROM videogioco WHERE titolo = 'The Last of Us'));
+INSERT INTO videogioco_libreria (id, commento, data_aggiunta, voto, utente_id, videogioco_id) VALUES (nextval('videogioco_libreria_seq'), 'Troppo difficile per me, ma bel gioco.', '2026-07-12', 7, (SELECT id FROM utente WHERE username = 'luigi_verdi'), (SELECT id FROM videogioco WHERE titolo = 'Elden Ring'));
+INSERT INTO videogioco_libreria (id, data_aggiunta, utente_id, videogioco_id) VALUES (nextval('videogioco_libreria_seq'), '2026-07-15', (SELECT id FROM utente WHERE username = 'mario_rossi'), (SELECT id FROM videogioco WHERE titolo = 'The Witcher 3'));
