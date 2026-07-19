@@ -10,7 +10,7 @@ import it.uniroma3.siw.model.Videogioco;
 
 public interface RepositoryVideogioco extends CrudRepository<Videogioco, Long>{
 	
-	@Query("SELECT v FROM Videogioco v LEFT JOIN FETCH v.recensioni WHERE v.id = :id")
+	@Query("SELECT v FROM Videogioco v LEFT JOIN FETCH v.videogiocoLibreria WHERE v.id = :id")
     Optional<Videogioco> findByIdWithRecensioni(@Param("id") Long id);
 
     Optional<Videogioco> findByRawgId(Long rawgId);
