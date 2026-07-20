@@ -36,6 +36,17 @@ public class VideogiocoLibreriaController {
         return "redirect:/rawg/gioco/" + rawgId; 
     }
     
+    // Questa rotta gestisce la rimozione di un gioco dalla libreria personale
+    @PostMapping("/libreria/rimuovi")
+    public String rimuoviGiocoDaLibreria(@RequestParam("videogiocoId") Long videogiocoId, @RequestParam("idUtente") Long idUtente) {
+        
+        // Chiamiamo il service per rimuovere il gioco
+        videogiocoLibreriaService.rimuoviDaLibreria(idUtente, videogiocoId);
+        
+        // Una volta rimosso, reindirizziamo l'utente alla vista generale della libreria
+        return "redirect:/libreria"; 
+    }
+    
     // Questa rotta mostra la pagina della libreria personale (Il tuo nuovo HTML)
     @GetMapping("/libreria")
     public String mostraLibreriaPersonale(Model model) {

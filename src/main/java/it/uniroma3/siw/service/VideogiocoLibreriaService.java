@@ -102,6 +102,22 @@ public class VideogiocoLibreriaService {
         }
     }
     
+    @Transactional
+    public void rimuoviDaLibreria(Long idUtente, Long videogiocoId) {
+        Utente utente = utenteRepository.findById(idUtente).orElse(null);
+        Videogioco videogioco = videogiocoRepository.findById(videogiocoId).orElse(null);
+        
+        if (utente != null && videogioco != null) {
+            // Cerchiamo il collegamento esatto nella libreria
+            VideogiocoLibreria collegamento = videogiocoLibreriaRepository.findByUtenteAndVideogioco(utente, videogioco).orElse(null);
+            
+            // Se esiste, lo eliminiamo
+            if (collegamento != null) {
+                videogiocoLibreriaRepository.delete(collegamento);
+            }
+        }
+    }
+    
     public List<VideogiocoLibreria> findAll() {
         return (List<VideogiocoLibreria>) videogiocoLibreriaRepository.findAll();
     }

@@ -52,13 +52,13 @@
 					<input type="hidden" name="rawgId" th:value="${gioco.id}" />
 					<input type="hidden" name="idUtente" value="1" />
 				    <button type="submit" class="btn btn-primary" style="flex: 1; text-align: center;">
-					➕ Aggiungi
+					Aggiungi alla Libreria
 					</button>
 					</form>
 					                        
 					<!-- Bottone Destro (Mostrato se GIÀ in libreria) -->
 					<button th:if="${isInLibreria}" class="btn btn-primary" style="flex: 1; text-align: center; opacity: 0.8; cursor: default;" disabled>
-					✔ Gioco Aggiunto
+					Gioco  già Aggiunto
 					</button>
 					                        
 					</div>

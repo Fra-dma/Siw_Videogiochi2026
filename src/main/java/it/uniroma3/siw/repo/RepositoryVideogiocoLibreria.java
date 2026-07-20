@@ -1,6 +1,7 @@
 package it.uniroma3.siw.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
@@ -12,6 +13,8 @@ public interface RepositoryVideogiocoLibreria extends CrudRepository<VideogiocoL
 	
 	// Trova le recensioni dato l'id del videogioco
     List<VideogiocoLibreria> findByVideogiocoId(Long videogiocoId);
+    
+    Optional<VideogiocoLibreria> findByUtenteAndVideogioco(Utente utente, Videogioco videogioco);
 
     // Trova le recensioni dato l'id dell'utente
     List<VideogiocoLibreria> findByUtenteId(Long utenteId);
