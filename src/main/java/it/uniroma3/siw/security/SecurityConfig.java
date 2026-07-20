@@ -22,12 +22,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/rawg/popolari")
                         .permitAll())
 
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .defaultSuccessUrl("/"))
+                        .defaultSuccessUrl("/rawg/popolari"))
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -36,7 +36,7 @@ public class SecurityConfig {
                             if (refererUrl != null) {
                                 response.sendRedirect(refererUrl);
                             } else {
-                                response.sendRedirect("/");
+                                response.sendRedirect("/rawg/popolari");
                             }
                         })
                         .permitAll());

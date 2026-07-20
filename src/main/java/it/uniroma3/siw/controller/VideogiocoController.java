@@ -30,18 +30,8 @@ public class VideogiocoController {
     } 
     
     @GetMapping("/")
-    public String showHomePage(Model model) {
-        // Passa la lista dei giochi per la griglia
-        model.addAttribute("videogiochi", videogiocoService.findAll());
-        
-        // Verifica se l'utente è loggato (sia in modo classico che con Google)
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null && 
-                                  authentication.isAuthenticated() && 
-                                  !(authentication instanceof AnonymousAuthenticationToken);
-        
-        model.addAttribute("isAuthenticated", isAuthenticated);
-        
-        return "index"; // Assicurati di avere il file home.html in src/main/resources/templates/
+    public String showHomePage() {
+        // Reindirizza istantaneamente l'utente alla rotta dei giochi popolari di RAWG
+        return "redirect:/rawg/popolari"; 
     }
 }
