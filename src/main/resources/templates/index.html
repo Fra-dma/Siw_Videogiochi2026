@@ -10,14 +10,7 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">🎮 SiwVideogiochi</a>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/rawg/popolari">Giochi Popolari (RAWG)</a>
-            <a th:href="@{/libreria}">Libreria Personale</a>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container hero-section">
         <h1 class="hero-title">Esplora il Mondo dei Videogiochi</h1>
