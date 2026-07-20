@@ -19,7 +19,6 @@ public class VideogiocoController {
     @Autowired
     private VideogiocoService videogiocoService;
 
-    // Aggiungiamo i repository che ci servono per recuperare la recensione
     @Autowired
     private RepositoryUtente utenteRepository;
 
@@ -32,24 +31,22 @@ public class VideogiocoController {
         return "videogiochi"; 
     }
 
+    //Rotta per videogioco con recensione
     @GetMapping("/videogioco/{id}")
     public String showVideogioco(@PathVariable Long id, Model model) {
         Videogioco videogioco = videogiocoService.findById(id).orElse(null);
         model.addAttribute("videogioco", videogioco);
         
-        // Simuliamo l'utente 1, coerentemente con il resto del tuo codice
         Long idUtenteAttuale = 1L; 
 
         if (videogioco != null) {
             Utente utente = utenteRepository.findById(idUtenteAttuale).orElse(null);
             
             if (utente != null) {
-                // Cerchiamo la recensione (il collegamento nella libreria) per questo utente e questo gioco
                 VideogiocoLibreria recensione = videogiocoLibreriaRepository
                         .findByUtenteAndVideogioco(utente, videogioco)
                         .orElse(null);
                 
-                // Passiamo la recensione al model (l'HTML la userà con ${recensione})
                 model.addAttribute("recensione", recensione);
             }
         }

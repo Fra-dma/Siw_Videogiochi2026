@@ -3,45 +3,24 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-    <!-- Fragment Navbar -->
     <nav class="navbar" th:fragment="navbar">
         <a href="/" class="navbar-brand">🎮 SiwVideogiochi</a>
         <div style="display: flex; align-items: center; gap: 2rem; flex: 1; justify-content: flex-end;">
-            <!-- Contenitore per l'app React (Solo Search Bar / Autocomplete) -->
             <div id="react-search-bar" style="width: 100%; max-width: 350px; position: relative;"></div>
 
-            <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
-                
-                <!-- Link standard -->
-                <a th:if="${paginaAttuale != 'popolari'}" href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
-                <a th:href="@{/libreria}">Libreria Personale</a>
-                
-                <!-- SEZIONE LOGIN / LOGOUT -->
-                
-				<a sec:authorize="isAnonymous()" th:href="@{/login}" 
-				                   style="background: var(--primary); color: white; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.2s;">
-				                   Login
-				                </a>
-				                
-				                <!-- Mostrato SOLO se l'utente è "Autenticato" (loggato) -->
-				                <!-- Trasformato in un FORM per inviare una richiesta POST sicura -->
-				                <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="margin: 0;">
-				                    <button type="submit" 
-				                            style="background: rgba(239, 68, 68, 0.8); border: 1px solid rgba(239, 68, 68, 0.4); color: white; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: inherit;">
-				                        Logout
-				                    </button>
-				                </form>
-                
-            </div>
+			<div class="nav-links">
+
+			                <a th:if="${paginaAttuale != 'popolari'}" href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
+			                
+			                <a th:href="@{/libreria}">Libreria Personale</a>
+			                
+			            </div>
         </div>
-        
-        <!-- Caricamento librerie React e Componente SearchBar -->
         <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
         <script type="text/babel">
-        /*<![CDATA[*/
             const { useState, useEffect } = React;
 
             function SearchBar() {
@@ -116,7 +95,6 @@
 
             const root = ReactDOM.createRoot(document.getElementById('react-search-bar'));
             root.render(<SearchBar />);
-        /*]]>*/
         </script>
     </nav>
 

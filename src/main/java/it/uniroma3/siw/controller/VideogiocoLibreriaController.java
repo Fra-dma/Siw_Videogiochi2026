@@ -20,23 +20,21 @@ public class VideogiocoLibreriaController {
     @Autowired
     private VideogiocoLibreriaService videogiocoLibreriaService;
 
-    // Questa rotta gestisce il salvataggio di un nuovo gioco nella libreria (Aggiunta Manuale)
+    // Rotta che gestisce il salvataggio di un nuovo gioco nella libreria
     @PostMapping("/libreria/aggiungi")
     public String addVideogiocoLibreria(@ModelAttribute VideogiocoLibreria videogiocoLibreria) {
         videogiocoLibreriaService.save(videogiocoLibreria);
-        // Dopo averlo salvato, reindirizziamo l'utente alla pagina del gioco appena aggiunto
         return "redirect:/videogioco/" + videogiocoLibreria.getVideogioco().getId();
     }
     
-    // Questa rotta gestisce l'aggiunta di un gioco proveniente dalle API di RAWG
+    // Rotta per l'aggiunta di un gioco nella libreria
     @PostMapping("/libreria/aggiungiDaRawg")
     public String aggiungiGiocoDaRawg(@RequestParam("rawgId") Long rawgId, @RequestParam("idUtente") Long idUtente) {
-        // Salviamo il gioco
         videogiocoLibreriaService.aggiungiDaRawgALibreria(idUtente, rawgId);
         return "redirect:/rawg/gioco/" + rawgId; 
     }
     
- // Modifica la rotta esistente per rimanere sulla pagina del gioco
+    //Rotta per recensire
     @PostMapping("/libreria/recensisci")
     public String recensisciGioco(@RequestParam("videogiocoId") Long videogiocoId, 
                                   @RequestParam("voto") Integer voto, 
@@ -44,22 +42,19 @@ public class VideogiocoLibreriaController {
         Long idUtenteAttuale = 1L; 
         videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, voto, commento);
         
-        // Ora ti reindirizza alla pagina del gioco!
         return "redirect:/videogioco/" + videogiocoId; 
     }
 
-    // Aggiungi questa nuova rotta per eliminare la recensione
+    // Rotta per rimuovere recensione
     @PostMapping("/libreria/recensione/rimuovi")
     public String rimuoviRecensione(@RequestParam("videogiocoId") Long videogiocoId) {
         Long idUtenteAttuale = 1L; 
-        
-        // Passando null resettiamo i campi senza eliminare il gioco dalla libreria
-        videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, null, null);
+               videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, null, null);
         
         return "redirect:/videogioco/" + videogiocoId; 
     }
     
-    // Questa rotta gestisce la rimozione di un gioco dalla libreria personale
+    // Rotta per rimuovere gioco da libreria
     @PostMapping("/libreria/rimuovi")
     public String rimuoviGiocoDaLibreria(@RequestParam("videogiocoId") Long videogiocoId, @RequestParam("idUtente") Long idUtente) {
         
@@ -70,20 +65,14 @@ public class VideogiocoLibreriaController {
         return "redirect:/libreria"; 
     }
     
-    // Questa rotta mostra la pagina della libreria personale (Il tuo nuovo HTML)
+    // Rotta che mostra la pagina della libreria personale
     @GetMapping("/libreria")
     public String mostraLibreriaPersonale(Model model) {
         
-        // NOTA: Per ora simuliamo che l'utente loggato sia quello con ID 1.
         Long idUtenteAttuale = 1L; 
         
-        // Chiamiamo il SERVICE, rispettando l'architettura corretta!
-        List<Videogioco> videogiochiDellUtente = videogiocoLibreriaService.ottieniVideogiochiLibreriaUtente(idUtenteAttuale);
-                
-        // Passiamo la lista al tuo HTML
+        List<Videogioco> videogiochiDellUtente = videogiocoLibreriaService.ottieniVideogiochiLibreriaUtente(idUtenteAttuale);                
         model.addAttribute("videogiochi", videogiochiDellUtente);
-        
-        // Restituisce il file "libreria.html"
         return "libreria"; 
     }   
 }

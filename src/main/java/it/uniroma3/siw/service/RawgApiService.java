@@ -27,27 +27,24 @@ public class RawgApiService {
     
 public RawgGameDTO getGameById(Long rawgId) {
         
-        // Creiamo lo strumento di Spring Boot per fare richieste su Internet
+
         RestTemplate restTemplate = new RestTemplate();
 
-        // Costruiamo l'indirizzo finale da chiamare
         String url = baseUrl + rawgId + "?key=" + apiKey;
 
-        try {
-            // Facciamo la richiesta HTTP GET. 
+        try { 
             RawgGameDTO giocoTrovato = restTemplate.getForObject(url, RawgGameDTO.class);
             return giocoTrovato;
             
         } catch (Exception e) {
-            // Se RAWG ci dà un errore (es. gioco non trovato o chiave API errata), lo catturiamo qui
             System.out.println("Attenzione! Errore durante il recupero del gioco da RAWG: " + e.getMessage());
             return null;
         }
     }
 
-    /**
-     * Recupera una lista dei giochi più popolari (o aggiunti di recente).
-     */
+   
+     //Recupera una lista dei giochi più popolari
+    
     public List<RawgGameDTO> getPopularGames() {
         return fetchGamesList(UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
@@ -57,9 +54,8 @@ public RawgGameDTO getGameById(Long rawgId) {
                 .toUriString());
     }
 
-    /**
-     * Cerca giochi tramite query testuale.
-     */
+    //Cerca giochi tramite ricerca
+    
     public List<RawgGameDTO> searchGames(String query) {
         return fetchGamesList(UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
@@ -69,9 +65,8 @@ public RawgGameDTO getGameById(Long rawgId) {
                 .toUriString());
     }
 
-    /**
-     * Recupera i giochi con filtri avanzati.
-     */
+    //Recupera giochi con filtri
+    
     public List<RawgGameDTO> getGamesWithFilters(String query, Boolean excludeAdditions, String ordering) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
@@ -89,7 +84,6 @@ public RawgGameDTO getGameById(Long rawgId) {
         if (ordering != null && !ordering.trim().isEmpty()) {
             builder.queryParam("ordering", ordering);
         } else if (query == null || query.trim().isEmpty()) {
-            // Ordine predefinito per i popolari
             builder.queryParam("ordering", "-added");
         }
 
@@ -108,9 +102,8 @@ public RawgGameDTO getGameById(Long rawgId) {
         return Collections.emptyList();
     }
 
-    /**
-     * Recupera i dettagli completi di un singolo gioco tramite il suo ID di RAWG.
-     */
+   //Recupera i dati del gioco
+    
     public RawgGameDTO getGameDetails(Long rawgId) {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games/" + rawgId)
