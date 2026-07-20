@@ -11,6 +11,7 @@ import it.uniroma3.siw.model.dto.RawgResponseDTO;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RawgApiService {
@@ -117,7 +118,30 @@ public RawgGameDTO getGameById(Long rawgId) {
                 .toUriString();
 
         try {
-            return restTemplate.getForObject(url, RawgGameDTO.class);
+            RawgGameDTO game = restTemplate.getForObject(url, RawgGameDTO.class);
+            if (game != null) {
+                String screenshotsUrl = UriComponentsBuilder.fromUriString(baseUrl)
+                    .path("/games/" + rawgId + "/screenshots")
+                    .queryParam("key", apiKey)
+                    .toUriString();
+                
+                try {
+                    Map<String, Object> screenshotsResponse = restTemplate.getForObject(screenshotsUrl, Map.class);
+                    if (screenshotsResponse != null && screenshotsResponse.containsKey("results")) {
+                        List<Map<String, Object>> results = (List<Map<String, Object>>) screenshotsResponse.get("results");
+                        List<String> images = new java.util.ArrayList<>();
+                        for (Map<String, Object> res : results) {
+                            if (res.containsKey("image")) {
+                                images.add((String) res.get("image"));
+                            }
+                        }
+                        game.setScreenshots(images);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Errore recupero screenshots: " + e.getMessage());
+                }
+            }
+            return game;
         } catch (Exception e) {
             System.err.println("Errore durante il recupero dei dettagli del gioco: " + e.getMessage());
             return null;
