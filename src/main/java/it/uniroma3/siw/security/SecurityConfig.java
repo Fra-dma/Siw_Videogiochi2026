@@ -31,14 +31,7 @@ public class SecurityConfig {
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            String refererUrl = request.getHeader("Referer");
-                            if (refererUrl != null) {
-                                response.sendRedirect(refererUrl);
-                            } else {
-                                response.sendRedirect("/rawg/popolari");
-                            }
-                        })
+                        .logoutSuccessUrl("/rawg/popolari") 
                         .permitAll());
 
         return http.build();
