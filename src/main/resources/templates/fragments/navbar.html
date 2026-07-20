@@ -9,11 +9,14 @@
             <!-- Contenitore per l'app React (Solo Search Bar / Autocomplete) -->
             <div id="react-search-bar" style="width: 100%; max-width: 350px; position: relative;"></div>
 
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
-                <a th:href="@{/libreria}">Libreria Personale</a>
-            </div>
+			<div class="nav-links">
+			                
+			                <!-- th:if controlla che la variabile NON SIA uguale a 'popolari' -->
+			                <a th:if="${paginaAttuale != 'popolari'}" href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
+			                
+			                <a th:href="@{/libreria}">Libreria Personale</a>
+			                
+			            </div>
         </div>
         
         <!-- Caricamento librerie React e Componente SearchBar -->
