@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-import it.uniroma3.siw.model.*;
-
 @Entity
 public class Utente {
 

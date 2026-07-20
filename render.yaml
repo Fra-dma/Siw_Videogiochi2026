@@ -1,0 +1,42 @@
+databases:
+  - name: siw-db
+    databaseName: videogiochi
+    user: postgres
+    plan: free
+
+services:
+  - type: web
+    name: siw-videogiochi
+    env: docker
+    plan: free
+    envVars:
+      - key: DB_URL
+        value: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+      - key: DB_HOST
+        fromDatabase:
+          name: siw-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: siw-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: siw-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: siw-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: siw-db
+          property: password
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: PORT
+        value: "8080"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
