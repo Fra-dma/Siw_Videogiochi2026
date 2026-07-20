@@ -121,6 +121,38 @@ public RawgGameDTO getGameById(Long rawgId) {
             RawgGameDTO game = restTemplate.getForObject(url, RawgGameDTO.class);
             if (game != null) {
 
+                // Recupero URL reali degli store
+                if (game.getStores() != null) {
+                    String storesLinksUrl = UriComponentsBuilder.fromUriString(baseUrl)
+                        .path("/games/" + rawgId + "/stores")
+                        .queryParam("key", apiKey)
+                        .toUriString();
+                    try {
+                        Map<String, Object> storesResponse = restTemplate.getForObject(storesLinksUrl, Map.class);
+                        if (storesResponse != null && storesResponse.containsKey("results")) {
+                            List<Map<String, Object>> results = (List<Map<String, Object>>) storesResponse.get("results");
+                            Map<Integer, String> storeUrlMap = new java.util.HashMap<>();
+                            for (Map<String, Object> res : results) {
+                                if (res.containsKey("store_id") && res.containsKey("url")) {
+                                    storeUrlMap.put(((Number) res.get("store_id")).intValue(), (String) res.get("url"));
+                                }
+                            }
+                            for (Map<String, Object> storeWrapper : game.getStores()) {
+                                if (storeWrapper.containsKey("store") && storeWrapper.get("store") != null) {
+                                    Map<String, Object> storeDetails = (Map<String, Object>) storeWrapper.get("store");
+                                    if (storeDetails.containsKey("id")) {
+                                        int sId = ((Number) storeDetails.get("id")).intValue();
+                                        if (storeUrlMap.containsKey(sId)) {
+                                            storeWrapper.put("url", storeUrlMap.get(sId));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Errore recupero link stores: " + e.getMessage());
+                    }
+                }
                 String screenshotsUrl = UriComponentsBuilder.fromUriString(baseUrl)
                     .path("/games/" + rawgId + "/screenshots")
                     .queryParam("key", apiKey)
