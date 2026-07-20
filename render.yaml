@@ -1,7 +1,6 @@
 databases:
   - name: siw-db
     databaseName: videogiochi
-    user: postgres
     plan: free
 
 services:
