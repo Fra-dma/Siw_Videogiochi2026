@@ -120,6 +120,7 @@ public RawgGameDTO getGameById(Long rawgId) {
         try {
             RawgGameDTO game = restTemplate.getForObject(url, RawgGameDTO.class);
             if (game != null) {
+
                 String screenshotsUrl = UriComponentsBuilder.fromUriString(baseUrl)
                     .path("/games/" + rawgId + "/screenshots")
                     .queryParam("key", apiKey)

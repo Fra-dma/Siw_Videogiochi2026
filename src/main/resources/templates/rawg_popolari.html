@@ -13,10 +13,15 @@
 
     <nav class="navbar">
         <a href="/" class="navbar-brand">🎮 SiwVideogiochi</a>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
-            <a th:href="@{/libreria}">Libreria Personale</a>
+        <div style="display: flex; align-items: center; gap: 2rem; flex: 1; justify-content: flex-end;">
+            <!-- Contenitore per l'app React (Solo Search Bar / Autocomplete) -->
+            <div id="react-search-bar" style="width: 100%; max-width: 350px; position: relative;"></div>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
+                <a th:href="@{/libreria}">Libreria Personale</a>
+            </div>
         </div>
     </nav>
 
@@ -27,8 +32,28 @@
                 di RAWG.</p>
         </div>
 
-        <!-- Contenitore per l'app React -->
-        <div id="react-app"></div>
+
+
+        <!-- Griglia principale (Renderizzata lato server con Thymeleaf) -->
+        <div class="games-grid" th:if="${giochi != null && !giochi.isEmpty()}">
+            <a th:each="gioco : ${giochi}" th:href="@{/rawg/gioco/{id}(id=${gioco.id})}" class="game-card">
+                <div class="card-img-container">
+                    <img th:src="${gioco.background_image != null ? gioco.background_image : 'https://via.placeholder.com/600x400?text=No+Image'}" 
+                         alt="Cover del gioco" 
+                         class="card-img" />
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title" th:text="${gioco.name}">Nome Gioco</h3>
+                    <div class="card-meta">
+                        <span th:text="${gioco.released != null ? gioco.released : 'Data sconosciuta'}">Data Rilascio</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div th:if="${giochi == null || giochi.isEmpty()}" style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
+            <h2>Nessun gioco popolare trovato al momento.</h2>
+        </div>
 
     <!-- Caricamento librerie React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -39,43 +64,34 @@
     /*<![CDATA[*/
         const { useState, useEffect } = React;
 
-        function App() {
-            const [games, setGames] = useState([]);
+        function SearchBar() {
             const [search, setSearch] = useState('');
-            const [typeFilter, setTypeFilter] = useState('all');
-            const [ordering, setOrdering] = useState('-added');
+            const [results, setResults] = useState([]);
             const [loading, setLoading] = useState(false);
+            const [showDropdown, setShowDropdown] = useState(false);
 
             useEffect(() => {
-                // Il debounce evita di fare troppe chiamate API mentre l'utente sta ancora digitando o cambiando i filtri
+                if (!search.trim()) {
+                    setResults([]);
+                    setShowDropdown(false);
+                    return;
+                }
+
                 const delayDebounceFn = setTimeout(() => {
-                    fetchGames();
+                    fetchResults();
                 }, 500);
 
                 return () => clearTimeout(delayDebounceFn);
-            }, [search, typeFilter, ordering]);
+            }, [search]);
 
-            const fetchGames = () => {
+            const fetchResults = () => {
                 setLoading(true);
-                let url = `/api/rawg/ricerca?`;
-                
-                if (search.trim()) {
-                    url += `query=${encodeURIComponent(search.trim())}&`;
-                }
-                
-                if (typeFilter === 'game') {
-                    url += `excludeAdditions=true&`;
-                }
-
-                if (ordering) {
-                    url += `ordering=${encodeURIComponent(ordering)}`;
-                }
-                
-                fetch(url)
+                fetch(`/api/rawg/ricerca?query=${encodeURIComponent(search.trim())}`)
                     .then(res => res.json())
                     .then(data => {
-                        setGames(data || []);
+                        setResults(data || []);
                         setLoading(false);
+                        setShowDropdown(true);
                     })
                     .catch(err => {
                         console.error(err);
@@ -84,79 +100,42 @@
             };
 
             return (
-                <div>
-                    <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <input 
-                            type="text" 
-                            placeholder="Cerca un videogioco per nome (aggiornamento automatico)..." 
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            style={{ flex: '1 1 300px', padding: '1rem', borderRadius: '8px', border: '1px solid #ccc', fontSize: '1rem' }}
-                        />
-                        
-                        <select 
-                            value={typeFilter}
-                            onChange={(e) => setTypeFilter(e.target.value)}
-                            style={{ padding: '1rem', borderRadius: '8px', border: '1px solid #ccc', fontSize: '1rem', backgroundColor: 'white', cursor: 'pointer' }}
-                        >
-                            <option value="all">Tutti (Giochi e DLC)</option>
-                            <option value="game">Solo Videogiochi (No DLC)</option>
-                        </select>
-
-                        <select 
-                            value={ordering}
-                            onChange={(e) => setOrdering(e.target.value)}
-                            style={{ padding: '1rem', borderRadius: '8px', border: '1px solid #ccc', fontSize: '1rem', backgroundColor: 'white', cursor: 'pointer' }}
-                        >
-                            <option value="-added">Popolarità (Default)</option>
-                            <option value="-released">Data di Rilascio (più recenti)</option>
-                            <option value="released">Data di Rilascio (meno recenti)</option>
-                            <option value="-rating">Miglior Voto degli Utenti</option>
-                            <option value="-metacritic">Miglior Punteggio Metacritic</option>
-                            <option value="name">Nome (A-Z)</option>
-                        </select>
-                    </div>
-
-                    {loading ? (
-                        <div style={{ textAlign: 'center', marginTop: '3rem', color: 'var(--text-muted)' }}>
-                            <h2>Caricamento in corso...</h2>
+                <div style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
+                    <input 
+                        type="text" 
+                        placeholder="Cerca un gioco..." 
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        onFocus={() => { if (results.length > 0) setShowDropdown(true); }}
+                        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                        style={{ width: '100%', padding: '0.6rem 1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', fontSize: '0.95rem', boxSizing: 'border-box', backgroundColor: 'rgba(30, 41, 59, 0.9)', color: '#f8fafc' }}
+                    />
+                    
+                    {loading && (
+                        <div style={{ position: 'absolute', right: '15px', top: '10px', color: '#cbd5e1', fontSize: '0.9rem' }}>
+                            ...
                         </div>
-                    ) : (
-                        games.length > 0 ? (
-                            <div className="games-grid">
-                                {games.map(gioco => (
-                                    <a key={gioco.id} href={`/rawg/gioco/${gioco.id}`} className="game-card">
-                                        <div className="card-img-container">
-                                            <img 
-                                                src={gioco.background_image ? gioco.background_image : 'https://via.placeholder.com/600x400?text=No+Image'} 
-                                                alt="Cover del gioco" 
-                                                className="card-img" 
-                                            />
-                                        </div>
-                                        <div className="card-content">
-                                            <h3 className="card-title">{gioco.name}</h3>
-                                            <div className="card-meta">
-                                                <span>{gioco.released ? gioco.released : 'Data sconosciuta'}</span>
-                                                <span className="rating-badge">
-                                                    ★ <span>{gioco.rating ? gioco.rating : 'N/A'}</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                ))}
-                            </div>
-                        ) : (
-                            <div style={{ textAlign: 'center', marginTop: '3rem', color: 'var(--text-muted)' }}>
-                                <h2>Nessun gioco trovato o errore API.</h2>
-                            </div>
-                        )
+                    )}
+
+                    {showDropdown && results.length > 0 && (
+                        <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, backgroundColor: 'rgba(30, 41, 59, 0.95)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)', zIndex: 1000, maxHeight: '400px', overflowY: 'auto', marginTop: '4px', backdropFilter: 'blur(8px)' }}>
+                            {results.map(gioco => (
+                                <a key={gioco.id} href={`/rawg/gioco/${gioco.id}`} style={{ display: 'flex', alignItems: 'center', padding: '10px', textDecoration: 'none', color: '#f8fafc', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', transition: 'background-color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                                    <img src={gioco.background_image || 'https://via.placeholder.com/40x40'} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', marginRight: '12px' }} />
+                                    <div>
+                                        <div style={{ fontWeight: '600', fontSize: '0.95rem', marginBottom: '2px' }}>{gioco.name}</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{gioco.released || 'N/A'}</div>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
                     )}
                 </div>
             );
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('react-app'));
-        root.render(<App />);
+        const root = ReactDOM.createRoot(document.getElementById('react-search-bar'));
+        root.render(<SearchBar />);
     /*]]>*/
     </script>
     </div>
