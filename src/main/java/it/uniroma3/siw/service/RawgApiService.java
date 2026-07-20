@@ -75,11 +75,15 @@ public RawgGameDTO getGameById(Long rawgId) {
     /**
      * Recupera i giochi con filtri avanzati.
      */
-    public List<RawgGameDTO> getGamesWithFilters(String query, String dlcFilter, String ordering) {
+    public List<RawgGameDTO> getGamesWithFilters(String query, String dlcFilter, String ordering, Integer page) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
                 .queryParam("key", apiKey)
                 .queryParam("page_size", 20);
+
+        if (page != null && page > 0) {
+            builder.queryParam("page", page);
+        }
 
         if (query != null && !query.trim().isEmpty()) {
             builder.queryParam("search", query);

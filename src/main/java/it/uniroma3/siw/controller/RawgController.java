@@ -31,7 +31,7 @@ public class RawgController {
         model.addAttribute("dlc_filter", dlcFilter != null ? dlcFilter : "all");
         model.addAttribute("ordering", ordering != null ? ordering : "-added");
 
-        model.addAttribute("giochi", rawgApiService.getGamesWithFilters(search, dlcFilter, ordering));
+        model.addAttribute("giochi", rawgApiService.getGamesWithFilters(search, dlcFilter, ordering, 1));
 
         return "rawg_popolari";
     }
