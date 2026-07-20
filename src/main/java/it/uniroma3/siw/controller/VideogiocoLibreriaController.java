@@ -36,6 +36,29 @@ public class VideogiocoLibreriaController {
         return "redirect:/rawg/gioco/" + rawgId; 
     }
     
+ // Modifica la rotta esistente per rimanere sulla pagina del gioco
+    @PostMapping("/libreria/recensisci")
+    public String recensisciGioco(@RequestParam("videogiocoId") Long videogiocoId, 
+                                  @RequestParam("voto") Integer voto, 
+                                  @RequestParam("commento") String commento) {
+        Long idUtenteAttuale = 1L; 
+        videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, voto, commento);
+        
+        // Ora ti reindirizza alla pagina del gioco!
+        return "redirect:/videogioco/" + videogiocoId; 
+    }
+
+    // Aggiungi questa nuova rotta per eliminare la recensione
+    @PostMapping("/libreria/recensione/rimuovi")
+    public String rimuoviRecensione(@RequestParam("videogiocoId") Long videogiocoId) {
+        Long idUtenteAttuale = 1L; 
+        
+        // Passando null resettiamo i campi senza eliminare il gioco dalla libreria
+        videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, null, null);
+        
+        return "redirect:/videogioco/" + videogiocoId; 
+    }
+    
     // Questa rotta gestisce la rimozione di un gioco dalla libreria personale
     @PostMapping("/libreria/rimuovi")
     public String rimuoviGiocoDaLibreria(@RequestParam("videogiocoId") Long videogiocoId, @RequestParam("idUtente") Long idUtente) {

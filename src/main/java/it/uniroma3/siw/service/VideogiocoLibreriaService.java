@@ -146,4 +146,22 @@ public class VideogiocoLibreriaService {
     public void deleteById(Long id) {
         videogiocoLibreriaRepository.deleteById(id);
     }
+    
+    @Transactional
+    public void aggiornaVotoECommento(Long idUtente, Long videogiocoId, Integer voto, String commento) {
+        Utente utente = utenteRepository.findById(idUtente).orElse(null);
+        Videogioco videogioco = videogiocoRepository.findById(videogiocoId).orElse(null);
+        
+        if (utente != null && videogioco != null) {
+            VideogiocoLibreria libreriaEntry = videogiocoLibreriaRepository
+                    .findByUtenteAndVideogioco(utente, videogioco)
+                    .orElse(null);
+            
+            if (libreriaEntry != null) {
+                libreriaEntry.setVoto(voto);
+                libreriaEntry.setCommento(commento);
+                videogiocoLibreriaRepository.save(libreriaEntry);
+            }
+        }
+    }
 }
