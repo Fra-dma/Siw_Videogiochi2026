@@ -28,13 +28,17 @@
                         </div>
                     </div>
 
+                    <!-- Contenitore Bottoni -->
                     <div style="margin-top: 2rem; display: flex; gap: 2rem;">
 
+                        <!-- Bottone Sinistro -->
                         <a href="/rawg/popolari" class="btn"
                             style="flex: 1; text-align: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
                             Torna ai Popolari
                         </a>
 
+                        <!-- Bottone Destro (Mostrato se NON in libreria) -->
+                        <!-- Aggiunto display: flex per far stirare il bottone interno -->
                         <form th:unless="${isInLibreria}" th:action="@{/libreria/aggiungiDaRawg}" method="post"
                             style="flex: 1; margin: 0; display: flex;">
                             <input type="hidden" name="rawgId" th:value="${gioco.id}" />
@@ -44,6 +48,7 @@
                             </button>
                         </form>
 
+                        <!-- Bottone Destro (Mostrato se GIÀ in libreria) -->
                         <button th:if="${isInLibreria}" class="btn btn-primary"
                             style="flex: 1; text-align: center; opacity: 0.8; cursor: default;" disabled>
                             Gioco già Aggiunto
@@ -97,6 +102,7 @@
                     th:text="${gioco.description_raw}"></p>
             </div>
 
+            <!-- Negozi / Store -->
             <div th:if="${gioco.stores != null && !gioco.stores.isEmpty()}" style="margin-top: 2rem;">
                 <h2
                     style="margin-bottom: 1rem; font-size: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.5rem;">
@@ -112,6 +118,7 @@
                 </div>
             </div>
             
+            <!-- Screenshots -->
             <div th:if="${gioco.screenshots != null && !gioco.screenshots.isEmpty()}" style="margin-top: 2rem;">
                 <h2 style="margin-bottom: 1rem; font-size: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.5rem;">
                     Screenshots</h2>

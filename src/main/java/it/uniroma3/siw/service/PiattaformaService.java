@@ -1,6 +1,6 @@
 package it.uniroma3.siw.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +12,11 @@ import java.util.List;
 @Service
 public class PiattaformaService {
 
-    @Autowired
-    private RepositoryPiattaforma piattaformaRepository;
+    private final RepositoryPiattaforma piattaformaRepository;
+
+    public PiattaformaService(RepositoryPiattaforma piattaformaRepository) {
+        this.piattaformaRepository = piattaformaRepository;
+    }
 
     @Transactional
     public void save(Piattaforma piattaforma) {

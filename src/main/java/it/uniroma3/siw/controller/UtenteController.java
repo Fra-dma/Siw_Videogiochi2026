@@ -1,6 +1,5 @@
 package it.uniroma3.siw.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +10,11 @@ import it.uniroma3.siw.service.UtenteService;
 @Controller
 public class UtenteController {
 
-    @Autowired
-    private UtenteService utenteService;
+    private final UtenteService utenteService;
+
+    public UtenteController(UtenteService utenteService) {
+        this.utenteService = utenteService;
+    }
 
     @GetMapping("/utenti")
     public String showUtenti(Model model) {

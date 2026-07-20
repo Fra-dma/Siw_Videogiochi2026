@@ -1,6 +1,6 @@
 package it.uniroma3.siw.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,8 +13,11 @@ import it.uniroma3.siw.repo.RepositoryUtente; // Assicurati che il nome coincida
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-   private RepositoryUtente utenteRepository;
+   private final RepositoryUtente utenteRepository;
+
+   public CustomUserDetailsService(RepositoryUtente utenteRepository) {
+       this.utenteRepository = utenteRepository;
+   }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

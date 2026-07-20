@@ -2,7 +2,6 @@ package it.uniroma3.siw.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,8 +14,11 @@ import it.uniroma3.siw.service.RawgApiService;
 @RequestMapping("/api/rawg")
 public class RawgRestController {
 
-    @Autowired
-    private RawgApiService rawgApiService;
+    private final RawgApiService rawgApiService;
+
+    public RawgRestController(RawgApiService rawgApiService) {
+        this.rawgApiService = rawgApiService;
+    }
 
     @GetMapping("/popolari")
     public List<RawgGameDTO> getPopularGames() {

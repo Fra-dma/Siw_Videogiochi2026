@@ -1,6 +1,5 @@
 package it.uniroma3.siw.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,14 +15,17 @@ import it.uniroma3.siw.service.VideogiocoService;
 @Controller
 public class VideogiocoController {
 
-    @Autowired
-    private VideogiocoService videogiocoService;
+    private final VideogiocoService videogiocoService;
+    private final RepositoryUtente utenteRepository;
+    private final RepositoryVideogiocoLibreria videogiocoLibreriaRepository;
 
-    @Autowired
-    private RepositoryUtente utenteRepository;
-
-    @Autowired
-    private RepositoryVideogiocoLibreria videogiocoLibreriaRepository;
+    public VideogiocoController(VideogiocoService videogiocoService,
+                                RepositoryUtente utenteRepository,
+                                RepositoryVideogiocoLibreria videogiocoLibreriaRepository) {
+        this.videogiocoService = videogiocoService;
+        this.utenteRepository = utenteRepository;
+        this.videogiocoLibreriaRepository = videogiocoLibreriaRepository;
+    }
 
     @GetMapping("/videogiochi")
     public String showVideogiochi(Model model) {
@@ -31,22 +33,24 @@ public class VideogiocoController {
         return "videogiochi"; 
     }
 
-    //Rotta per videogioco con recensione
     @GetMapping("/videogioco/{id}")
     public String showVideogioco(@PathVariable Long id, Model model) {
         Videogioco videogioco = videogiocoService.findById(id).orElse(null);
         model.addAttribute("videogioco", videogioco);
         
+        // Simuliamo l'utente 1, coerentemente con il resto del tuo codice
         Long idUtenteAttuale = 1L; 
 
         if (videogioco != null) {
             Utente utente = utenteRepository.findById(idUtenteAttuale).orElse(null);
             
             if (utente != null) {
+                // Cerchiamo la recensione (il collegamento nella libreria) per questo utente e questo gioco
                 VideogiocoLibreria recensione = videogiocoLibreriaRepository
                         .findByUtenteAndVideogioco(utente, videogioco)
                         .orElse(null);
                 
+                // Passiamo la recensione al model (l'HTML la userà con ${recensione})
                 model.addAttribute("recensione", recensione);
             }
         }

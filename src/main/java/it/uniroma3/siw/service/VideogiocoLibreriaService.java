@@ -1,6 +1,6 @@
 package it.uniroma3.siw.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +20,20 @@ import java.util.stream.Collectors;
 @Service
 public class VideogiocoLibreriaService {
 
-    @Autowired
-    private RepositoryVideogiocoLibreria videogiocoLibreriaRepository;
-    
-    @Autowired
-    private RawgApiService rawgApiService;
+    private final RepositoryVideogiocoLibreria videogiocoLibreriaRepository;
+    private final RawgApiService rawgApiService;
+    private final RepositoryVideogioco videogiocoRepository;
+    private final RepositoryUtente utenteRepository;
 
-    @Autowired
-    private RepositoryVideogioco videogiocoRepository;
-
-    @Autowired
-    private RepositoryUtente utenteRepository;
+    public VideogiocoLibreriaService(RepositoryVideogiocoLibreria videogiocoLibreriaRepository,
+                                     RawgApiService rawgApiService,
+                                     RepositoryVideogioco videogiocoRepository,
+                                     RepositoryUtente utenteRepository) {
+        this.videogiocoLibreriaRepository = videogiocoLibreriaRepository;
+        this.rawgApiService = rawgApiService;
+        this.videogiocoRepository = videogiocoRepository;
+        this.utenteRepository = utenteRepository;
+    }
     
     public boolean esisteGiocoDaRawgInLibreria(Long idUtente, Long rawgId) {
         Utente utente = utenteRepository.findById(idUtente).orElse(null);
@@ -39,14 +42,16 @@ public class VideogiocoLibreriaService {
         if (utente != null && videogioco != null) {
             return videogiocoLibreriaRepository.existsByUtenteAndVideogioco(utente, videogioco);
         }
-        return false;
+        return false; // Se non c'è l'utente o il gioco non è mai stato salvato, restituisce falso
     }
     
     @Transactional
     public List<Videogioco> ottieniVideogiochiLibreriaUtente(Long idUtente) {
         
+        // 1. Recuperiamo tutti i collegamenti Utente-Gioco dal database
         List<VideogiocoLibreria> elementiLibreria = videogiocoLibreriaRepository.findByUtenteId(idUtente);
         
+        // 2. Estraiamo solo gli oggetti "Videogioco" dalla libreria e li restituiamo
         return elementiLibreria.stream()
                 .map(VideogiocoLibreria::getVideogioco)
                 .collect(Collectors.toList());
@@ -57,14 +62,17 @@ public class VideogiocoLibreriaService {
         
         Utente utente = utenteRepository.findById(utenteId).orElse(null);
         
+        // Se l'utente non c'è, interrompiamo l'operazione
         if (utente == null) {
             return; 
         }
 
         Videogioco videogioco = videogiocoRepository.findByRawgId(rawgId).orElse(null);
 
+        // Se il gioco non esiste nel database locale, lo scarichiamo da RAWG
         if (videogioco == null) {
-
+            
+            // NOTA: Assicurati che "getGameDetails" sia il nome corretto del metodo nel tuo RawgApiService
             RawgGameDTO dto = rawgApiService.getGameDetails(rawgId); 
             
             if (dto != null) {
@@ -73,18 +81,20 @@ public class VideogiocoLibreriaService {
                 videogioco.setTitolo(dto.getName());
                 videogioco.setUrlCopertina(dto.getBackground_image());
                 
+                // Estraiamo solo l'anno dalla data di rilascio
                 if (dto.getReleased() != null && dto.getReleased().length() >= 4) {
                     videogioco.setAnnoUscita(Integer.parseInt(dto.getReleased().substring(0, 4)));
                 }
                 
+                // Salviamo il nuovo gioco nel database locale
                 videogioco = videogiocoRepository.save(videogioco); 
             } else {
+                // Se l'API non restituisce dati validi, interrompiamo l'operazione
                 return;
             }
         }
 
         // Se il gioco non è già presente nella libreria dell'utente, lo aggiungiamo
-        
         if (!videogiocoLibreriaRepository.existsByUtenteAndVideogioco(utente, videogioco)) {
             VideogiocoLibreria nuovaAggiunta = new VideogiocoLibreria();
             nuovaAggiunta.setUtente(utente);
@@ -101,8 +111,10 @@ public class VideogiocoLibreriaService {
         Videogioco videogioco = videogiocoRepository.findById(videogiocoId).orElse(null);
         
         if (utente != null && videogioco != null) {
+            // Cerchiamo il collegamento esatto nella libreria
             VideogiocoLibreria collegamento = videogiocoLibreriaRepository.findByUtenteAndVideogioco(utente, videogioco).orElse(null);
             
+            // Se esiste, lo eliminiamo
             if (collegamento != null) {
                 videogiocoLibreriaRepository.delete(collegamento);
             }

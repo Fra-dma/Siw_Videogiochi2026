@@ -1,6 +1,6 @@
 package it.uniroma3.siw.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +13,11 @@ import java.util.Optional;
 @Service
 public class UtenteService {
 
-    @Autowired
-    private RepositoryUtente utenteRepository;
+    private final RepositoryUtente utenteRepository;
+
+    public UtenteService(RepositoryUtente utenteRepository) {
+        this.utenteRepository = utenteRepository;
+    }
 
     @Transactional
     public void save(Utente utente) {

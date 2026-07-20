@@ -22,6 +22,7 @@
 
 
 
+        <!-- Griglia principale (Renderizzata lato server con Thymeleaf) -->
         <div class="games-grid" th:if="${giochi != null && !giochi.isEmpty()}">
             <a th:each="gioco : ${giochi}" th:href="@{/rawg/gioco/{id}(id=${gioco.id})}" class="game-card">
                 <div class="card-img-container">

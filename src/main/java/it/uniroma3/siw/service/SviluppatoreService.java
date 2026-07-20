@@ -1,6 +1,6 @@
 package it.uniroma3.siw.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +13,11 @@ import java.util.Optional;
 @Service
 public class SviluppatoreService {
 
-    @Autowired
-    private RepositorySviluppatore repositorySviluppatore;
+    private final RepositorySviluppatore repositorySviluppatore;
+
+    public SviluppatoreService(RepositorySviluppatore repositorySviluppatore) {
+        this.repositorySviluppatore = repositorySviluppatore;
+    }
 
     @Transactional
     public void save(Sviluppatore sviluppatore) {
