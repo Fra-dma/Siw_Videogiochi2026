@@ -75,7 +75,7 @@ public RawgGameDTO getGameById(Long rawgId) {
     /**
      * Recupera i giochi con filtri avanzati.
      */
-    public List<RawgGameDTO> getGamesWithFilters(String query, Boolean excludeAdditions, String ordering) {
+    public List<RawgGameDTO> getGamesWithFilters(String query, String dlcFilter, String ordering) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
                 .queryParam("key", apiKey)
@@ -85,8 +85,10 @@ public RawgGameDTO getGameById(Long rawgId) {
             builder.queryParam("search", query);
         }
         
-        if (excludeAdditions != null) {
-            builder.queryParam("exclude_additions", excludeAdditions);
+        if ("games".equalsIgnoreCase(dlcFilter)) {
+            builder.queryParam("exclude_additions", true);
+        } else if ("dlc".equalsIgnoreCase(dlcFilter)) {
+            builder.queryParam("tags", "dlc"); // RAWG approximation for DLCs
         }
         
         if (ordering != null && !ordering.trim().isEmpty()) {

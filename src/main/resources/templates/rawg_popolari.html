@@ -15,12 +15,41 @@
 
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">I Più Popolari del Momento</h1>
-            <p style="color: var(--text-muted);">Esplora i giochi di tendenza recuperati in tempo reale tramite le API
-                di RAWG.</p>
+            <h1 class="page-title">Esplora Giochi</h1>
+            <p style="color: var(--text-muted);">Esplora i giochi recuperati in tempo reale tramite le API di RAWG.</p>
         </div>
 
-
+        <!-- Form Filtri -->
+        <form action="/rawg/popolari" method="get" class="filters-form" style="display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-end; flex-wrap: wrap; background: rgba(30, 41, 59, 0.5); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="min-width: 250px;">
+                <label for="ordering" style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Ordina per</label>
+                <select id="ordering" name="ordering" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.8); color: white;">
+                    <option value="-added" th:selected="${ordering == '-added'}">Popolarità (Più aggiunti)</option>
+                    <option value="-released" th:selected="${ordering == '-released'}">Data di uscita (Più recenti)</option>
+                    <option value="released" th:selected="${ordering == 'released'}">Data di uscita (Meno recenti)</option>
+                    <option value="-metacritic" th:selected="${ordering == '-metacritic'}">Votazione (Alta-Bassa)</option>
+                    <option value="metacritic" th:selected="${ordering == 'metacritic'}">Votazione (Bassa-Alta)</option>
+                    <option value="name" th:selected="${ordering == 'name'}">Nome (A-Z)</option>
+                    <option value="-name" th:selected="${ordering == '-name'}">Nome (Z-A)</option>
+                </select>
+            </div>
+            
+            <div style="min-width: 200px;">
+                <label for="dlc_filter" style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Tipo Contenuto</label>
+                <select id="dlc_filter" name="dlc_filter" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.8); color: white;">
+                    <option value="all" th:selected="${dlc_filter == 'all'}">Giochi + DLC</option>
+                    <option value="games" th:selected="${dlc_filter == 'games'}">Solo Giochi</option>
+                    <option value="dlc" th:selected="${dlc_filter == 'dlc'}">Solo DLC</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                Applica Filtri
+            </button>
+            <a href="/rawg/popolari" style="padding: 0.8rem 1.5rem; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s;">
+                Reset
+            </a>
+        </form>
 
         <!-- Griglia principale (Renderizzata lato server con Thymeleaf) -->
         <div class="games-grid" th:if="${giochi != null && !giochi.isEmpty()}">

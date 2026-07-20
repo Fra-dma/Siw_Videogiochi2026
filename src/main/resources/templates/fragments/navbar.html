@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- NOTA: Abbiamo aggiunto xmlns:sec per abilitare i controlli di sicurezza -->
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <body>
 
     <!-- Fragment Navbar -->
@@ -11,37 +12,38 @@
             <div id="react-search-bar" style="width: 100%; max-width: 350px; position: relative;"></div>
 
             <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
-                
+
                 <!-- Link standard -->
-                <a th:if="${paginaAttuale != 'popolari'}" href="/rawg/popolari" style="color: var(--primary);">Giochi Popolari (RAWG)</a>
+                <a th:if="${paginaAttuale != 'popolari'}" href="/rawg/popolari" style="color: var(--primary);">Giochi
+                    Popolari</a>
                 <a th:href="@{/libreria}">Libreria Personale</a>
-                
+
                 <!-- SEZIONE LOGIN / LOGOUT -->
-                
-				<a sec:authorize="isAnonymous()" th:href="@{/login}" 
-				                   style="background: var(--primary); color: white; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.2s;">
-				                   Login
-				                </a>
-				                
-				                <!-- Mostrato SOLO se l'utente è "Autenticato" (loggato) -->
-				                <!-- Trasformato in un FORM per inviare una richiesta POST sicura -->
-				                <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="margin: 0;">
-				                    <button type="submit" 
-				                            style="background: rgba(239, 68, 68, 0.8); border: 1px solid rgba(239, 68, 68, 0.4); color: white; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: inherit;">
-				                        Logout
-				                    </button>
-				                </form>
-                
+
+                <a sec:authorize="isAnonymous()" th:href="@{/login}"
+                    style="background: var(--primary); color: white; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.2s;">
+                    Login
+                </a>
+
+                <!-- Mostrato SOLO se l'utente è "Autenticato" (loggato) -->
+                <!-- Trasformato in un FORM per inviare una richiesta POST sicura -->
+                <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit"
+                        style="background: rgba(239, 68, 68, 0.8); border: 1px solid rgba(239, 68, 68, 0.4); color: white; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: inherit;">
+                        Logout
+                    </button>
+                </form>
+
             </div>
         </div>
-        
+
         <!-- Caricamento librerie React e Componente SearchBar -->
         <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
         <script type="text/babel">
-        /*<![CDATA[*/
+            /*<![CDATA[*/
             const { useState, useEffect } = React;
 
             function SearchBar() {
@@ -81,16 +83,16 @@
 
                 return (
                     <div style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
-                        <input 
-                            type="text" 
-                            placeholder="Cerca un gioco..." 
+                        <input
+                            type="text"
+                            placeholder="Cerca un gioco..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onFocus={() => { if (results.length > 0) setShowDropdown(true); }}
                             onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                             style={{ width: '100%', padding: '0.6rem 1rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', fontSize: '0.95rem', boxSizing: 'border-box', backgroundColor: 'rgba(30, 41, 59, 0.9)', color: '#f8fafc' }}
                         />
-                        
+
                         {loading && (
                             <div style={{ position: 'absolute', right: '15px', top: '10px', color: '#cbd5e1', fontSize: '0.9rem' }}>
                                 ...
@@ -116,9 +118,10 @@
 
             const root = ReactDOM.createRoot(document.getElementById('react-search-bar'));
             root.render(<SearchBar />);
-        /*]]>*/
+            /*]]>*/
         </script>
     </nav>
 
 </body>
+
 </html>

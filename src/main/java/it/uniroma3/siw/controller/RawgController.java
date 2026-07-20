@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import it.uniroma3.siw.service.RawgApiService;
 import it.uniroma3.siw.service.VideogiocoLibreriaService;
 
@@ -18,20 +19,31 @@ public class RawgController {
         this.videogiocoLibreriaService = videogiocoLibreriaService;
     }
 
-    // Questa rotta restituisce la vista dei giochi popolari
+    // Questa rotta restituisce la vista dei giochi popolari con filtri
     @GetMapping("/rawg/popolari")
-    public String showPopularGames(Model model) {
-        model.addAttribute("giochi", rawgApiService.getPopularGames());
-        return "rawg_popolari"; // Restituisce la vista rawg_popolari.html
+    public String showPopularGames(
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "dlc_filter", required = false) String dlcFilter,
+            @RequestParam(value = "ordering", required = false) String ordering,
+            Model model) {
+
+        model.addAttribute("search", search);
+        model.addAttribute("dlc_filter", dlcFilter != null ? dlcFilter : "all");
+        model.addAttribute("ordering", ordering != null ? ordering : "-added");
+
+        model.addAttribute("giochi", rawgApiService.getGamesWithFilters(search, dlcFilter, ordering));
+
+        return "rawg_popolari";
     }
 
-    // Questa rotta mostra i dettagli di un singolo gioco preso da RAWG tramite il suo ID
+    // Questa rotta mostra i dettagli di un singolo gioco preso da RAWG tramite il
+    // suo ID
     @GetMapping("/rawg/gioco/{id}")
     public String showGameDetails(@PathVariable("id") Long id, Model model) {
         // Passiamo i dettagli del gioco all'HTML
         model.addAttribute("gioco", rawgApiService.getGameDetails(id));
         // Simuliamo l'utente loggato
-        Long idUtenteAttuale = 1L; 
+        Long idUtenteAttuale = 1L;
         boolean inLibreria = videogiocoLibreriaService.esisteGiocoDaRawgInLibreria(idUtenteAttuale, id);
         // Passiamo la variabile "isInLibreria" all'HTML
         model.addAttribute("isInLibreria", inLibreria);
