@@ -12,33 +12,34 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/videogioco/**", "/css/**", "/images/**", "/js/**", "/api/**", "/error",
-                                "/rawg/popolari", "/rawg/gioco/**")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/rawg/popolari")
-                        .permitAll())
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests(authorize -> authorize
+                                                .requestMatchers("/", "/videogioco/**", "/css/**", "/images/**",
+                                                                "/js/**", "/api/**", "/error",
+                                                                "/rawg/popolari", "/rawg/gioco/**")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .defaultSuccessUrl("/rawg/popolari")
+                                                .permitAll())
 
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/rawg/popolari"))
+                                .oauth2Login(oauth2 -> oauth2
+                                                .loginPage("/login")
+                                                .defaultSuccessUrl("/rawg/popolari"))
 
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/rawg/popolari") 
-                        .permitAll());
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessUrl("/rawg/popolari")
+                                                .permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

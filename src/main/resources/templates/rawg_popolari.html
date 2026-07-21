@@ -20,71 +20,87 @@
         </div>
 
         <!-- Form Filtri -->
-        <form action="/rawg/popolari" method="get" class="filters-form" style="display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-end; flex-wrap: wrap; background: rgba(30, 41, 59, 0.5); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+        <form action="/rawg/popolari" method="get" class="filters-form"
+            style="display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-end; flex-wrap: wrap; background: rgba(30, 41, 59, 0.5); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
             <div style="min-width: 250px;">
-                <label for="ordering" style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Ordina per</label>
-                <select id="ordering" name="ordering" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.8); color: white;">
+                <label for="ordering"
+                    style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Ordina
+                    per</label>
+                <select id="ordering" name="ordering"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.8); color: white;">
                     <option value="-added" th:selected="${ordering == '-added'}">Popolarità (Più aggiunti)</option>
-                    <option value="-released" th:selected="${ordering == '-released'}">Data di uscita (Più recenti)</option>
-                    <option value="released" th:selected="${ordering == 'released'}">Data di uscita (Meno recenti)</option>
-                    <option value="-metacritic" th:selected="${ordering == '-metacritic'}">Votazione (Alta-Bassa)</option>
+                    <option value="-released" th:selected="${ordering == '-released'}">Data di uscita (Più recenti)
+                    </option>
+                    <option value="released" th:selected="${ordering == 'released'}">Data di uscita (Meno recenti)
+                    </option>
+                    <option value="-metacritic" th:selected="${ordering == '-metacritic'}">Votazione (Alta-Bassa)
+                    </option>
                     <option value="metacritic" th:selected="${ordering == 'metacritic'}">Votazione (Bassa-Alta)</option>
                     <option value="name" th:selected="${ordering == 'name'}">Nome (A-Z)</option>
                     <option value="-name" th:selected="${ordering == '-name'}">Nome (Z-A)</option>
                 </select>
             </div>
-            
+
             <div style="min-width: 200px;">
-                <label for="dlc_filter" style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Tipo Contenuto</label>
-                <select id="dlc_filter" name="dlc_filter" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.8); color: white;">
+                <label for="dlc_filter"
+                    style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Tipo
+                    Contenuto</label>
+                <select id="dlc_filter" name="dlc_filter"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.8); color: white;">
                     <option value="all" th:selected="${dlc_filter == 'all'}">Giochi + DLC</option>
                     <option value="games" th:selected="${dlc_filter == 'games'}">Solo Giochi</option>
                     <option value="dlc" th:selected="${dlc_filter == 'dlc'}">Solo DLC</option>
                 </select>
             </div>
-            
-            <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+
+            <button type="submit" class="btn btn-primary"
+                style="padding: 0.8rem 1.5rem; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
                 Applica Filtri
             </button>
         </form>
 
-        <!-- Griglia principale (Renderizzata lato server con Thymeleaf) -->
+        <!-- Griglia principale -->
         <div class="games-grid" th:if="${giochi != null && !giochi.isEmpty()}">
             <a th:each="gioco : ${giochi}" th:href="@{/rawg/gioco/{id}(id=${gioco.id})}" class="game-card">
                 <div class="card-img-container">
-                    <img th:src="${gioco.background_image != null ? gioco.background_image : 'https://via.placeholder.com/600x400?text=No+Image'}" 
-                         alt="Cover del gioco" 
-                         class="card-img" />
+                    <img th:src="${gioco.background_image != null ? gioco.background_image : 'https://via.placeholder.com/600x400?text=No+Image'}"
+                        alt="Cover del gioco" class="card-img" />
                 </div>
                 <div class="card-content">
                     <h3 class="card-title" th:text="${gioco.name}">Nome Gioco</h3>
                     <div class="card-meta">
-                        <span th:text="${gioco.released != null ? gioco.released : 'Data sconosciuta'}">Data Rilascio</span>
+                        <span th:text="${gioco.released != null ? gioco.released : 'Data sconosciuta'}">Data
+                            Rilascio</span>
                     </div>
                 </div>
             </a>
         </div>
-        
-        <div th:if="${giochi == null || giochi.isEmpty()}" style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
+
+        <div th:if="${giochi == null || giochi.isEmpty()}"
+            style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
             <h2>Nessun gioco popolare trovato al momento.</h2>
         </div>
-        <!-- Sentry per infinite scroll -->
+        <!-- Sentry per scroll infinito -->
         <div id="loading-spinner" style="text-align: center; margin: 2rem 0; display: none;">
-            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s ease-in-out infinite;"></div>
+            <div
+                style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s ease-in-out infinite;">
+            </div>
             <style>
                 @keyframes spin {
-                    to { transform: rotate(360deg); }
+                    to {
+                        transform: rotate(360deg);
+                    }
                 }
             </style>
         </div>
         <div id="infinite-scroll-sentry" style="height: 20px;"></div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const gamesGrid = document.querySelector('.games-grid');
                 const sentry = document.getElementById('infinite-scroll-sentry');
                 const loadingSpinner = document.getElementById('loading-spinner');
-                
+
                 if (!gamesGrid || !sentry) return;
 
                 let currentPage = 1;
@@ -112,11 +128,11 @@
                     try {
                         const url = `/api/rawg/ricerca?query=${encodeURIComponent(query)}&dlc_filter=${encodeURIComponent(dlcFilter)}&ordering=${encodeURIComponent(ordering)}&page=${currentPage}`;
                         const response = await fetch(url);
-                        
+
                         if (!response.ok) throw new Error('Network response was not ok');
-                        
+
                         const games = await response.json();
-                        
+
                         if (!games || games.length === 0) {
                             hasMore = false;
                             observer.disconnect();
