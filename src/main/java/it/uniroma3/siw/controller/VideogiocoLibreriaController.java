@@ -9,16 +9,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.model.Videogioco;
 import it.uniroma3.siw.model.VideogiocoLibreria;
 import it.uniroma3.siw.service.UtenteService;
 import it.uniroma3.siw.service.VideogiocoLibreriaService;
 import it.uniroma3.siw.service.CommentoService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Controller
 public class VideogiocoLibreriaController {
@@ -35,38 +30,6 @@ public class VideogiocoLibreriaController {
         this.commentoService = commentoService;
     }
 
-    private Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()
-                || "anonymousUser".equals(authentication.getPrincipal())) {
-            return null;
-        }
-        String username;
-        String email = "default@example.com";
-        if (authentication.getPrincipal() instanceof UserDetails) {
-            username = ((UserDetails) authentication.getPrincipal()).getUsername();
-        } else if (authentication.getPrincipal() instanceof OAuth2User) {
-            OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-            username = oauth2User.getAttribute("email");
-            email = oauth2User.getAttribute("email");
-            if (username == null)
-                username = authentication.getName();
-        } else {
-            username = authentication.getName();
-        }
-
-        Utente u = utenteService.findByUsername(username).orElse(null);
-        if (u == null) {
-            u = new Utente();
-            u.setUsername(username);
-            u.setEmail(email);
-            u.setPassword("oauth2_placeholder");
-            u.setRuolo("USER");
-            utenteService.save(u);
-        }
-        return u.getId();
-    }
-
     // Questa rotta gestisce il salvataggio di un nuovo gioco nella libreria
     // (Aggiunta Manuale)
     @PostMapping("/libreria/aggiungi")
@@ -81,7 +44,7 @@ public class VideogiocoLibreriaController {
     @PostMapping("/libreria/aggiungiDaRawg")
     public String aggiungiGiocoDaRawg(@RequestParam("rawgId") Long rawgId,
             @RequestParam(value = "idUtente", required = false) Long idUtente) {
-        Long idUtenteAttuale = getCurrentUserId();
+        Long idUtenteAttuale = utenteService.getCurrentUserId();
         // Salviamo il gioco
         videogiocoLibreriaService.aggiungiDaRawgALibreria(idUtenteAttuale, rawgId);
         return "redirect:/rawg/gioco/" + rawgId;
@@ -92,7 +55,7 @@ public class VideogiocoLibreriaController {
     public String recensisciGioco(@RequestParam("videogiocoId") Long videogiocoId,
             @RequestParam("voto") Integer voto,
             @RequestParam("commento") String commento) {
-        Long idUtenteAttuale = getCurrentUserId();
+        Long idUtenteAttuale = utenteService.getCurrentUserId();
         commentoService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, voto, commento);
 
         // Ora ti reindirizza alla pagina del gioco!
@@ -102,7 +65,7 @@ public class VideogiocoLibreriaController {
     // Aggiungi questa nuova rotta per eliminare la recensione
     @PostMapping("/libreria/recensione/rimuovi")
     public String rimuoviRecensione(@RequestParam("videogiocoId") Long videogiocoId) {
-        Long idUtenteAttuale = getCurrentUserId();
+        Long idUtenteAttuale = utenteService.getCurrentUserId();
 
         commentoService.rimuoviCommento(idUtenteAttuale, videogiocoId);
 
@@ -114,7 +77,7 @@ public class VideogiocoLibreriaController {
     public String rimuoviGiocoDaLibreria(@RequestParam("videogiocoId") Long videogiocoId,
             @RequestParam(value = "idUtente", required = false) Long idUtente) {
 
-        Long idUtenteAttuale = getCurrentUserId();
+        Long idUtenteAttuale = utenteService.getCurrentUserId();
         // Chiamiamo il service per rimuovere il gioco
         videogiocoLibreriaService.rimuoviDaLibreria(idUtenteAttuale, videogiocoId);
 
@@ -126,7 +89,7 @@ public class VideogiocoLibreriaController {
     @GetMapping("/libreria")
     public String mostraLibreriaPersonale(Model model) {
 
-        Long idUtenteAttuale = getCurrentUserId();
+        Long idUtenteAttuale = utenteService.getCurrentUserId();
 
         // Chiamiamo il SERVICE, rispettando l'architettura corretta!
         List<Videogioco> videogiochiDellUtente = videogiocoLibreriaService

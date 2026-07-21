@@ -1,6 +1,5 @@
 package it.uniroma3.siw.service;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +8,11 @@ import it.uniroma3.siw.repo.RepositoryUtente;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Service
 public class UtenteService {
@@ -27,7 +31,7 @@ public class UtenteService {
     public Optional<Utente> findById(Long id) {
         return utenteRepository.findById(id);
     }
-    
+
     public Optional<Utente> findByUsername(String username) {
         return utenteRepository.findByUsername(username);
     }
@@ -39,5 +43,37 @@ public class UtenteService {
     @Transactional
     public void deleteById(Long id) {
         utenteRepository.deleteById(id);
+    }
+
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+            return null;
+        }
+        String username;
+        String email = "default@example.com";
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        } else if (authentication.getPrincipal() instanceof OAuth2User) {
+            OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+            username = oauth2User.getAttribute("email");
+            email = oauth2User.getAttribute("email");
+            if (username == null)
+                username = authentication.getName();
+        } else {
+            username = authentication.getName();
+        }
+
+        Utente u = findByUsername(username).orElse(null);
+        if (u == null) {
+            u = new Utente();
+            u.setUsername(username);
+            u.setEmail(email);
+            u.setPassword("oauth2_placeholder");
+            u.setRuolo("USER");
+            save(u);
+        }
+        return u.getId();
     }
 }
