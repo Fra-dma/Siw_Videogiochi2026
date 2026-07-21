@@ -1,6 +1,5 @@
 package it.uniroma3.siw.service;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,9 +26,9 @@ public class RawgApiService {
     public RawgApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-    
-public RawgGameDTO getGameById(Long rawgId) {
-        
+
+    public RawgGameDTO getGameById(Long rawgId) {
+
         // Creiamo lo strumento di Spring Boot per fare richieste su Internet
         RestTemplate restTemplate = new RestTemplate();
 
@@ -37,12 +36,13 @@ public RawgGameDTO getGameById(Long rawgId) {
         String url = baseUrl + rawgId + "?key=" + apiKey;
 
         try {
-            // Facciamo la richiesta HTTP GET. 
+            // Facciamo la richiesta HTTP GET.
             RawgGameDTO giocoTrovato = restTemplate.getForObject(url, RawgGameDTO.class);
             return giocoTrovato;
-            
+
         } catch (Exception e) {
-            // Se RAWG ci dà un errore (es. gioco non trovato o chiave API errata), lo catturiamo qui
+            // Se RAWG ci dà un errore (es. gioco non trovato o chiave API errata), lo
+            // catturiamo qui
             System.out.println("Attenzione! Errore durante il recupero del gioco da RAWG: " + e.getMessage());
             return null;
         }
@@ -75,24 +75,33 @@ public RawgGameDTO getGameById(Long rawgId) {
     /**
      * Recupera i giochi con filtri avanzati.
      */
-    public List<RawgGameDTO> getGamesWithFilters(String query, String dlcFilter, String ordering) {
+    public List<RawgGameDTO> getGamesWithFilters(String query, String dlcFilter, String ordering, Integer page) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
                 .queryParam("key", apiKey)
                 .queryParam("page_size", 20);
 
+        if (page != null && page > 0) {
+            builder.queryParam("page", page);
+        }
+
         if (query != null && !query.trim().isEmpty()) {
             builder.queryParam("search", query);
         }
-        
+
         if ("games".equalsIgnoreCase(dlcFilter)) {
             builder.queryParam("exclude_additions", true);
         } else if ("dlc".equalsIgnoreCase(dlcFilter)) {
             builder.queryParam("tags", "dlc"); // RAWG approximation for DLCs
         }
-        
+
         if (ordering != null && !ordering.trim().isEmpty()) {
             builder.queryParam("ordering", ordering);
+            if (ordering.contains("released")) {
+                // constraint: the game has to be officially released
+                String today = java.time.LocalDate.now().toString();
+                builder.queryParam("dates", "1950-01-01," + today);
+            }
         } else if (query == null || query.trim().isEmpty()) {
             // Ordine predefinito per i popolari
             builder.queryParam("ordering", "-added");
@@ -129,13 +138,14 @@ public RawgGameDTO getGameById(Long rawgId) {
                 // Recupero URL reali degli store
                 if (game.getStores() != null) {
                     String storesLinksUrl = UriComponentsBuilder.fromUriString(baseUrl)
-                        .path("/games/" + rawgId + "/stores")
-                        .queryParam("key", apiKey)
-                        .toUriString();
+                            .path("/games/" + rawgId + "/stores")
+                            .queryParam("key", apiKey)
+                            .toUriString();
                     try {
                         Map<String, Object> storesResponse = restTemplate.getForObject(storesLinksUrl, Map.class);
                         if (storesResponse != null && storesResponse.containsKey("results")) {
-                            List<Map<String, Object>> results = (List<Map<String, Object>>) storesResponse.get("results");
+                            List<Map<String, Object>> results = (List<Map<String, Object>>) storesResponse
+                                    .get("results");
                             Map<Integer, String> storeUrlMap = new java.util.HashMap<>();
                             for (Map<String, Object> res : results) {
                                 if (res.containsKey("store_id") && res.containsKey("url")) {
@@ -159,14 +169,15 @@ public RawgGameDTO getGameById(Long rawgId) {
                     }
                 }
                 String screenshotsUrl = UriComponentsBuilder.fromUriString(baseUrl)
-                    .path("/games/" + rawgId + "/screenshots")
-                    .queryParam("key", apiKey)
-                    .toUriString();
-                
+                        .path("/games/" + rawgId + "/screenshots")
+                        .queryParam("key", apiKey)
+                        .toUriString();
+
                 try {
                     Map<String, Object> screenshotsResponse = restTemplate.getForObject(screenshotsUrl, Map.class);
                     if (screenshotsResponse != null && screenshotsResponse.containsKey("results")) {
-                        List<Map<String, Object>> results = (List<Map<String, Object>>) screenshotsResponse.get("results");
+                        List<Map<String, Object>> results = (List<Map<String, Object>>) screenshotsResponse
+                                .get("results");
                         List<String> images = new java.util.ArrayList<>();
                         for (Map<String, Object> res : results) {
                             if (res.containsKey("image")) {

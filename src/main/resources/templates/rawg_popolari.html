@@ -46,9 +46,6 @@
             <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
                 Applica Filtri
             </button>
-            <a href="/rawg/popolari" style="padding: 0.8rem 1.5rem; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s;">
-                Reset
-            </a>
         </form>
 
         <!-- Griglia principale (Renderizzata lato server con Thymeleaf) -->
@@ -71,6 +68,94 @@
         <div th:if="${giochi == null || giochi.isEmpty()}" style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
             <h2>Nessun gioco popolare trovato al momento.</h2>
         </div>
+        <!-- Sentry per infinite scroll -->
+        <div id="loading-spinner" style="text-align: center; margin: 2rem 0; display: none;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s ease-in-out infinite;"></div>
+            <style>
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            </style>
+        </div>
+        <div id="infinite-scroll-sentry" style="height: 20px;"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const gamesGrid = document.querySelector('.games-grid');
+                const sentry = document.getElementById('infinite-scroll-sentry');
+                const loadingSpinner = document.getElementById('loading-spinner');
+                
+                if (!gamesGrid || !sentry) return;
+
+                let currentPage = 1;
+                let isLoading = false;
+                let hasMore = true;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const query = urlParams.get('search') || '';
+                const dlcFilter = urlParams.get('dlc_filter') || 'all';
+                const ordering = urlParams.get('ordering') || '-added';
+
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting && !isLoading && hasMore) {
+                        loadMoreGames();
+                    }
+                }, { rootMargin: '200px' });
+
+                observer.observe(sentry);
+
+                async function loadMoreGames() {
+                    isLoading = true;
+                    loadingSpinner.style.display = 'block';
+                    currentPage++;
+
+                    try {
+                        const url = `/api/rawg/ricerca?query=${encodeURIComponent(query)}&dlc_filter=${encodeURIComponent(dlcFilter)}&ordering=${encodeURIComponent(ordering)}&page=${currentPage}`;
+                        const response = await fetch(url);
+                        
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        
+                        const games = await response.json();
+                        
+                        if (!games || games.length === 0) {
+                            hasMore = false;
+                            observer.disconnect();
+                        } else {
+                            appendGames(games);
+                        }
+                    } catch (error) {
+                        console.error('Errore durante il caricamento di più giochi:', error);
+                    } finally {
+                        isLoading = false;
+                        loadingSpinner.style.display = 'none';
+                    }
+                }
+
+                function appendGames(games) {
+                    games.forEach(gioco => {
+                        const gameUrl = `/rawg/gioco/${gioco.id}`;
+                        const bgImage = gioco.background_image ? gioco.background_image : 'https://via.placeholder.com/600x400?text=No+Image';
+                        const released = gioco.released ? gioco.released : 'Data sconosciuta';
+                        const name = gioco.name || 'Senza nome';
+
+                        const html = `
+                            <a href="${gameUrl}" class="game-card">
+                                <div class="card-img-container">
+                                    <img src="${bgImage}" alt="Cover del gioco" class="card-img" />
+                                </div>
+                                <div class="card-content">
+                                    <h3 class="card-title">${name}</h3>
+                                    <div class="card-meta">
+                                        <span>${released}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                        gamesGrid.insertAdjacentHTML('beforeend', html);
+                    });
+                }
+            });
+        </script>
     </div>
 
 </body>

@@ -28,8 +28,9 @@ public class RawgRestController {
     @GetMapping("/ricerca")
     public List<RawgGameDTO> searchGames(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "dlcFilter", required = false) String dlcFilter,
-            @RequestParam(value = "ordering", required = false) String ordering) {
-        return rawgApiService.getGamesWithFilters(query, dlcFilter, ordering);
+            @RequestParam(value = "dlc_filter", required = false) String dlcFilter,
+            @RequestParam(value = "ordering", required = false) String ordering,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+        return rawgApiService.getGamesWithFilters(query, dlcFilter, ordering, page);
     }
 }

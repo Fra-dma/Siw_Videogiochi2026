@@ -33,8 +33,6 @@
                     <h3 class="card-title" th:text="${gioco.titolo}">Nome Gioco</h3>
                     <div class="card-meta">
                         <span th:text="${gioco.annoUscita != null ? gioco.annoUscita : 'Anno sconosciuto'}">2023</span>
-                        <span th:if="${gioco.sviluppatore != null}"
-                            th:text="${gioco.sviluppatore.nome}">Sviluppatore</span>
                     </div>
                 </div>
             </a>

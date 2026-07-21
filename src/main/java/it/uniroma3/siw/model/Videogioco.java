@@ -23,17 +23,8 @@ public class Videogioco {
     
     private String urlCopertina;
 
-    @ManyToOne
-    private Sviluppatore sviluppatore;
-
     @OneToMany(mappedBy = "videogioco", cascade = CascadeType.ALL)
     private List<VideogiocoLibreria> videogiocoLibreria;
-
-    @ManyToMany
-    private List<Genere> generi;
-
-    @ManyToMany
-    private List<Piattaforma> piattaforme;
     
     public Videogioco() {
     }
@@ -86,14 +77,6 @@ public class Videogioco {
 		this.urlCopertina = urlCopertina;
 	}
 
-	public Sviluppatore getSviluppatore() {
-		return sviluppatore;
-	}
-
-	public void setSviluppatore(Sviluppatore sviluppatore) {
-		this.sviluppatore = sviluppatore;
-	}
-
 	public List<VideogiocoLibreria> getRecensioni() {
 		return videogiocoLibreria;
 	}
@@ -102,20 +85,5 @@ public class Videogioco {
 		this.videogiocoLibreria = videogiocoLibreria;
 	}
 
-	public List<Genere> getGeneri() {
-		return generi;
-	}
-
-	public void setGeneri(List<Genere> generi) {
-		this.generi = generi;
-	}
-
-	public List<Piattaforma> getPiattaforme() {
-		return piattaforme;
-	}
-
-	public void setPiattaforme(List<Piattaforma> piattaforme) {
-		this.piattaforme = piattaforme;
-	}
 
 }

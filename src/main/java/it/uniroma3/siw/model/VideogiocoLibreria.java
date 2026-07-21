@@ -9,12 +9,12 @@ public class VideogiocoLibreria {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    private Integer voto; 
+
+    private Integer voto;
 
     @Column(length = 1000)
     private String commento;
-    
+
     private LocalDate dataAggiunta;
 
     @ManyToOne
@@ -22,7 +22,7 @@ public class VideogiocoLibreria {
 
     @ManyToOne
     private Videogioco videogioco;
-    
+
     public VideogiocoLibreria() {
     }
 
