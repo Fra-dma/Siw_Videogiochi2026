@@ -46,24 +46,9 @@
 
                 <div style="display: flex; gap: 1rem; margin-bottom: 2rem; color: var(--text-muted); font-size: 1.1rem; align-items: center;">
                     <span th:text="${videogioco.annoUscita != null ? videogioco.annoUscita : 'Anno sconosciuto'}">2023</span>
-                    <span>&bull;</span>
-                    <span th:if="${videogioco.sviluppatore != null}" th:text="${videogioco.sviluppatore.nome}">Sviluppatore</span>
-                    <span th:if="${videogioco.sviluppatore == null}">Sviluppatore sconosciuto</span>
                 </div>
 
-                <div class="tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
-                    <!-- Generi -->
-                    <span th:each="genere : ${videogioco.generi}" class="tag"
-                        style="background: rgba(142, 45, 226, 0.2); color: #c471ed; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem;"
-                        th:text="${genere.nome}">Genere</span>
-                </div>
 
-                <div class="tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
-                    <!-- Piattaforme -->
-                    <span th:each="piattaforma : ${videogioco.piattaforme}" class="tag"
-                        style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2);"
-                        th:text="${piattaforma.nome}">Piattaforma</span>
-                </div>
 
                 <div style="margin-bottom: 2rem; line-height: 1.6; color: rgba(255,255,255,0.8);">
                     <h3>Descrizione</h3>
