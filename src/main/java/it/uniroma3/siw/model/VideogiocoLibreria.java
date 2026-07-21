@@ -10,11 +10,6 @@ public class VideogiocoLibreria {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Integer voto;
-
-    @Column(length = 1000)
-    private String commento;
-
     private LocalDate dataAggiunta;
 
     @ManyToOne
@@ -32,22 +27,6 @@ public class VideogiocoLibreria {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getVoto() {
-        return voto;
-    }
-
-    public void setVoto(Integer voto) {
-        this.voto = voto;
-    }
-
-    public String getCommento() {
-        return commento;
-    }
-
-    public void setCommento(String commento) {
-        this.commento = commento;
     }
 
     public LocalDate getDataAggiunta() {

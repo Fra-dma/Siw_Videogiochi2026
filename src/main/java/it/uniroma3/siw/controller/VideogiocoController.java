@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.model.Videogioco;
-import it.uniroma3.siw.model.VideogiocoLibreria;
+import it.uniroma3.siw.model.Commento;
 import it.uniroma3.siw.repo.RepositoryUtente;
 import it.uniroma3.siw.repo.RepositoryVideogiocoLibreria;
 import it.uniroma3.siw.service.UtenteService;
 import it.uniroma3.siw.service.VideogiocoService;
+import it.uniroma3.siw.service.CommentoService;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,15 +27,18 @@ public class VideogiocoController {
     private final RepositoryUtente utenteRepository;
     private final RepositoryVideogiocoLibreria videogiocoLibreriaRepository;
     private final UtenteService utenteService;
+    private final CommentoService commentoService;
 
     public VideogiocoController(VideogiocoService videogiocoService,
                                 RepositoryUtente utenteRepository,
                                 RepositoryVideogiocoLibreria videogiocoLibreriaRepository,
-                                UtenteService utenteService) {
+                                UtenteService utenteService,
+                                CommentoService commentoService) {
         this.videogiocoService = videogiocoService;
         this.utenteRepository = utenteRepository;
         this.videogiocoLibreriaRepository = videogiocoLibreriaRepository;
         this.utenteService = utenteService;
+        this.commentoService = commentoService;
     }
 
     private Long getCurrentUserId() {
@@ -82,14 +88,24 @@ public class VideogiocoController {
             Utente utente = utenteRepository.findById(idUtenteAttuale).orElse(null);
             
             if (utente != null) {
-                // Cerchiamo la recensione (il collegamento nella libreria) per questo utente e questo gioco
-                VideogiocoLibreria recensione = videogiocoLibreriaRepository
+                // Controlla se il gioco è nella libreria
+                boolean inLibreria = videogiocoLibreriaRepository
                         .findByUtenteAndVideogioco(utente, videogioco)
-                        .orElse(null);
-                
-                // Passiamo la recensione al model (l'HTML la userà con ${recensione})
+                        .isPresent();
+                model.addAttribute("inLibreria", inLibreria);
+
+                // Cerchiamo la recensione (il commento) per questo utente e questo gioco
+                Commento recensione = commentoService.findRecensione(utente, videogioco);
                 model.addAttribute("recensione", recensione);
             }
+        }
+        
+        if (videogioco != null) {
+            List<Commento> tuttiICommenti = commentoService.findRecensioniByVideogioco(videogioco);
+            List<Commento> altreRecensioni = tuttiICommenti.stream()
+                .filter(c -> c.getAutore() == null || !c.getAutore().getId().equals(idUtenteAttuale))
+                .collect(Collectors.toList());
+            model.addAttribute("altreRecensioni", altreRecensioni);
         }
         
         return "videogioco"; 

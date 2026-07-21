@@ -14,6 +14,7 @@ import it.uniroma3.siw.model.Videogioco;
 import it.uniroma3.siw.model.VideogiocoLibreria;
 import it.uniroma3.siw.service.UtenteService;
 import it.uniroma3.siw.service.VideogiocoLibreriaService;
+import it.uniroma3.siw.service.CommentoService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,11 +25,14 @@ public class VideogiocoLibreriaController {
 
     private final VideogiocoLibreriaService videogiocoLibreriaService;
     private final UtenteService utenteService;
+    private final CommentoService commentoService;
 
     public VideogiocoLibreriaController(VideogiocoLibreriaService videogiocoLibreriaService,
-            UtenteService utenteService) {
+            UtenteService utenteService,
+            CommentoService commentoService) {
         this.videogiocoLibreriaService = videogiocoLibreriaService;
         this.utenteService = utenteService;
+        this.commentoService = commentoService;
     }
 
     private Long getCurrentUserId() {
@@ -89,7 +93,7 @@ public class VideogiocoLibreriaController {
             @RequestParam("voto") Integer voto,
             @RequestParam("commento") String commento) {
         Long idUtenteAttuale = getCurrentUserId();
-        videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, voto, commento);
+        commentoService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, voto, commento);
 
         // Ora ti reindirizza alla pagina del gioco!
         return "redirect:/videogioco/" + videogiocoId;
@@ -100,8 +104,7 @@ public class VideogiocoLibreriaController {
     public String rimuoviRecensione(@RequestParam("videogiocoId") Long videogiocoId) {
         Long idUtenteAttuale = getCurrentUserId();
 
-        // Passando null resettiamo i campi senza eliminare il gioco dalla libreria
-        videogiocoLibreriaService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, null, null);
+        commentoService.rimuoviCommento(idUtenteAttuale, videogiocoId);
 
         return "redirect:/videogioco/" + videogiocoId;
     }
