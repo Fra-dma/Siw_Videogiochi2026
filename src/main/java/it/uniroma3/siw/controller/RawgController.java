@@ -40,8 +40,7 @@ public class RawgController {
         return "rawg_popolari";
     }
 
-    // Questa rotta mostra i dettagli di un singolo gioco preso da RAWG tramite il
-    // suo ID
+    // Questa rotta mostra i dettagli di un singolo gioco preso da RAWG tramite il suo ID
     @GetMapping("/rawg/gioco/{id}")
     public String showGameDetails(@PathVariable("id") Long id, Model model) {
         // Passiamo i dettagli del gioco all'HTML

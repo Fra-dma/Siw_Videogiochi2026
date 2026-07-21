@@ -87,14 +87,14 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* Grid for games */
+/* Grid per i giochi*/
 .games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
 }
 
-/* Game Card (Glassmorphism) */
+/* Game Card */
 .game-card {
   background: var(--card-bg);
   border: 1px solid var(--glass-border);
@@ -115,8 +115,7 @@ body {
 
 .card-img-container {
   position: relative;
-  padding-top: 56.25%;
-  /* 16:9 Aspect Ratio */
+  padding-top: 56.25%; /* Aspetto 16:9 */
   overflow: hidden;
 }
 
@@ -264,9 +263,7 @@ body {
 }
 
 
-/* =========================================
-   LOGIN PAGE STYLES
-   ========================================= */
+/* Pagina di Login*/
 
 /* Centra la card di login nello schermo */
 .login-wrapper {

@@ -31,12 +31,10 @@ public class VideogiocoLibreriaController {
     }
 
     // Questa rotta gestisce il salvataggio di un nuovo gioco nella libreria
-    // (Aggiunta Manuale)
     @PostMapping("/libreria/aggiungi")
     public String addVideogiocoLibreria(@ModelAttribute VideogiocoLibreria videogiocoLibreria) {
         videogiocoLibreriaService.save(videogiocoLibreria);
-        // Dopo averlo salvato, reindirizziamo l'utente alla pagina del gioco appena
-        // aggiunto
+        // Dopo averlo salvato, reindirizza l'utente alla pagina del gioco appena aggiunto
         return "redirect:/videogioco/" + videogiocoLibreria.getVideogioco().getId();
     }
 
@@ -58,11 +56,11 @@ public class VideogiocoLibreriaController {
         Long idUtenteAttuale = utenteService.getCurrentUserId();
         commentoService.aggiornaVotoECommento(idUtenteAttuale, videogiocoId, voto, commento);
 
-        // Ora ti reindirizza alla pagina del gioco!
+        // Ora reindirizza alla vera pagina del gioco
         return "redirect:/videogioco/" + videogiocoId;
     }
 
-    // Aggiungi questa nuova rotta per eliminare la recensione
+    // Rotta per eliminare la recensione
     @PostMapping("/libreria/recensione/rimuovi")
     public String rimuoviRecensione(@RequestParam("videogiocoId") Long videogiocoId) {
         Long idUtenteAttuale = utenteService.getCurrentUserId();
@@ -78,24 +76,24 @@ public class VideogiocoLibreriaController {
             @RequestParam(value = "idUtente", required = false) Long idUtente) {
 
         Long idUtenteAttuale = utenteService.getCurrentUserId();
-        // Chiamiamo il service per rimuovere il gioco
+        // Chiama il service per rimuovere il gioco
         videogiocoLibreriaService.rimuoviDaLibreria(idUtenteAttuale, videogiocoId);
 
-        // Una volta rimosso, reindirizziamo l'utente alla vista generale della libreria
+        // Reindirizza alla libreria personale
         return "redirect:/libreria";
     }
 
-    // Questa rotta mostra la pagina della libreria personale (Il tuo nuovo HTML)
+    // Questa rotta mostra la pagina della libreria personale
     @GetMapping("/libreria")
     public String mostraLibreriaPersonale(Model model) {
 
         Long idUtenteAttuale = utenteService.getCurrentUserId();
 
-        // Chiamiamo il SERVICE, rispettando l'architettura corretta!
+        // Chiama il service
         List<Videogioco> videogiochiDellUtente = videogiocoLibreriaService
                 .ottieniVideogiochiLibreriaUtente(idUtenteAttuale);
 
-        // Passiamo la lista al tuo HTML
+        // Passa la lista all'HTML
         model.addAttribute("videogiochi", videogiochiDellUtente);
 
         // Restituisce il file "libreria.html"

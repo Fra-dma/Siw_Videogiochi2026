@@ -32,25 +32,22 @@ public class RawgApiService {
         // Creiamo lo strumento di Spring Boot per fare richieste su Internet
         RestTemplate restTemplate = new RestTemplate();
 
-        // Costruiamo l'indirizzo finale da chiamare
+        // indirizzo finale da chiamare
         String url = baseUrl + rawgId + "?key=" + apiKey;
 
         try {
-            // Facciamo la richiesta HTTP GET.
+            // richiesta HTTP GET.
             RawgGameDTO giocoTrovato = restTemplate.getForObject(url, RawgGameDTO.class);
             return giocoTrovato;
 
         } catch (Exception e) {
-            // Se RAWG ci dà un errore (es. gioco non trovato o chiave API errata), lo
-            // catturiamo qui
+            // Se RAWG dà un errore lo cattura
             System.out.println("Attenzione! Errore durante il recupero del gioco da RAWG: " + e.getMessage());
             return null;
         }
     }
 
-    /**
-     * Recupera una lista dei giochi più popolari (o aggiunti di recente).
-     */
+    // Recupera una lista dei giochi più popolari (o aggiunti di recente).
     public List<RawgGameDTO> getPopularGames() {
         return fetchGamesList(UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
@@ -60,9 +57,8 @@ public class RawgApiService {
                 .toUriString());
     }
 
-    /**
-     * Cerca giochi tramite query testuale.
-     */
+   
+    //Cerca giochi tramite query testuale.
     public List<RawgGameDTO> searchGames(String query) {
         return fetchGamesList(UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
@@ -72,9 +68,7 @@ public class RawgApiService {
                 .toUriString());
     }
 
-    /**
-     * Recupera i giochi con filtri avanzati.
-     */
+    //Recupera i giochi con filtri avanzati.
     public List<RawgGameDTO> getGamesWithFilters(String query, String dlcFilter, String ordering, Integer page) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games")
@@ -92,13 +86,13 @@ public class RawgApiService {
         if ("games".equalsIgnoreCase(dlcFilter)) {
             builder.queryParam("exclude_additions", true);
         } else if ("dlc".equalsIgnoreCase(dlcFilter)) {
-            builder.queryParam("tags", "dlc"); // RAWG approximation for DLCs
+            builder.queryParam("tags", "dlc");
         }
 
         if (ordering != null && !ordering.trim().isEmpty()) {
             builder.queryParam("ordering", ordering);
             if (ordering.contains("released")) {
-                // constraint: the game has to be officially released
+                // Il gioco deve essere rilasciato
                 String today = java.time.LocalDate.now().toString();
                 builder.queryParam("dates", "1950-01-01," + today);
             }
@@ -122,9 +116,8 @@ public class RawgApiService {
         return Collections.emptyList();
     }
 
-    /**
-     * Recupera i dettagli completi di un singolo gioco tramite il suo ID di RAWG.
-     */
+    
+    // Recupera i dettagli completi di un singolo gioco tramite il suo ID di RAWG.
     public RawgGameDTO getGameDetails(Long rawgId) {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/games/" + rawgId)

@@ -54,7 +54,7 @@ public class VideogiocoController {
                 boolean inLibreria = videogiocoLibreriaService.isGiocoInLibreria(utente, videogioco);
                 model.addAttribute("inLibreria", inLibreria);
 
-                // Cerchiamo la recensione (il commento) per questo utente e questo gioco
+                // Cerca la recensione per questo utente e questo gioco
                 Commento recensione = commentoService.findRecensione(utente, videogioco);
                 model.addAttribute("recensione", recensione);
             }

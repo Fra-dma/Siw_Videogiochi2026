@@ -38,7 +38,6 @@
                         </a>
 
                         <!-- Bottone Destro (Mostrato se NON in libreria) -->
-                        <!-- Aggiunto display: flex per far stirare il bottone interno -->
                         <form th:unless="${isInLibreria}" th:action="@{/libreria/aggiungiDaRawg}" method="post"
                             style="flex: 1; margin: 0; display: flex;">
                             <input type="hidden" name="rawgId" th:value="${gioco.id}" />
